@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Marketing Dashboard â JADIASN</title>
+  <title>Marketing Dashboard — JADIASN</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -13,15 +13,9 @@
 </head>
 <body>
   <div id="root"></div>
-  <script type="module">
-import React, { useState } from 'https://esm.sh/react@18.2.0';
-import * as ReactDOMAll from 'https://esm.sh/react-dom@18.2.0';
-import { createRoot } from 'https://esm.sh/react-dom@18.2.0/client';
-import * as Recharts from 'https://esm.sh/recharts@2.12.7?deps=react@18.2.0,react-dom@18.2.0';
-window.React = React;
-window.ReactDOM = { ...ReactDOMAll, createRoot };
-window.Recharts = Recharts;
-</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/recharts/2.12.7/Recharts.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
   <script type="text/babel">
 const { useState } = React;
@@ -54,6 +48,11 @@ const accounts = [
   { name: "FEBRIIRAWANFAIZ", ig: "febriirawanfaiz", tiktok: null },
   { name: "VIRACUN.ID", ig: "viracun.id", tiktok: null },
   { name: "VR_MAGHFIRAH", ig: "vr_maghfirah", tiktok: "vr_maghfirah" },
+  { name: "TEMANASN", ig: "temanasn", tiktok: null },
+  { name: "INTENSIFCPNS", ig: "intensifcpns", tiktok: null },
+  { name: "CPNS.ASN", ig: "cpns.asn", tiktok: null },
+  { name: "FANDIARYA", ig: "fandiarya", tiktok: null },
+  { name: "ASNINSTITUTE", ig: "asninstitute", tiktok: null },
 ];
 
 const igData = {
@@ -65,6 +64,11 @@ const igData = {
   febriirawanfaiz: { followers: 306582, change: 22, engagement: 0.24, grade: "B+", uploads: 2984 },
   "viracun.id": { followers: 255521, change: 41, engagement: 0.52, grade: "B+", uploads: 3102 },
   vr_maghfirah: { followers: 289356, change: 9, engagement: 0.85, grade: "B+", uploads: 2156 },
+  temanasn: { followers: 80405, change: 984, engagement: 0.63, grade: "B+", uploads: 1291 },
+  intensifcpns: { followers: 1067814, change: 384, engagement: 0.06, grade: "B+", uploads: 875 },
+  "cpns.asn": { followers: 1250752, change: 21000, engagement: 0.31, grade: "A-", uploads: 4469 },
+  fandiarya: { followers: 78146, change: 121, engagement: 5.05, grade: "B+", uploads: 793 },
+  asninstitute: { followers: 142899, change: 1677, engagement: 0.08, grade: "B+", uploads: 1947 },
 };
 
 const tiktokData = {
@@ -316,13 +320,13 @@ const ComparisonChart = ({ platform }) => {
   }).filter(d => d.available).sort((a, b) => b.change - a.change);
   return (
     <Card>
-      <h3 style={{ color: COLORS.text, fontSize: 16, fontWeight: 700, marginBottom: 16, marginTop: 0 }}>{platform === "ig" ? "\uD83D\uDCF8 Instagram" : "\uD83C\uDFB5 TikTok"} â Pertumbuhan Followers Hari Ini</h3>
+      <h3 style={{ color: COLORS.text, fontSize: 16, fontWeight: 700, marginBottom: 16, marginTop: 0 }}>{platform === "ig" ? "\uD83D\uDCF8 Instagram" : "\uD83C\uDFB5 TikTok"} — Pertumbuhan Followers Hari Ini</h3>
       <ResponsiveContainer width="100%" height={280}>
         <BarChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
           <XAxis dataKey="name" tick={{ fill: COLORS.textMuted, fontSize: 11 }} />
           <YAxis tick={{ fill: COLORS.textMuted, fontSize: 11 }} />
-          <Tooltip contentStyle={{ background: "#1e293b", border: "1px solid #334155", borderRadius: 8, color: "#fff" }} formatter={(val, name, entry) => [(val > 0 ? "+" : "") + val, entry.payload.fullName]} labelFormatter={() => ""} />
+          <Tooltip contentStyle={{ background: "#1e293b", border: "1px solid #334155", borderRadius: 8, color: "#fff" }} itemStyle={{ color: "#fff" }} labelStyle={{ color: "#94a3b8" }} formatter={(val, name, entry) => [(val > 0 ? "+" : "") + val, entry.payload.fullName]} labelFormatter={() => ""} />
           <Bar dataKey="change" radius={[6, 6, 0, 0]}>
             {data.map((entry, i) => (
               <Cell key={i} fill={entry.ours ? "#f59e0b" : (entry.change > 0 ? COLORS.positive : entry.change < 0 ? COLORS.negative : COLORS.neutral)} stroke={entry.ours ? "#fbbf24" : "none"} strokeWidth={entry.ours ? 2 : 0} />
@@ -341,19 +345,19 @@ const TrendChart = ({ platform, selectedAccount }) => {
   const accountHistory = history[tKey];
   if (!accountHistory) return (
     <Card>
-      <h3 style={{ color: COLORS.text, fontSize: 16, fontWeight: 700, marginTop: 0 }}>{platform === "ig" ? "\uD83D\uDCF8" : "\uD83C\uDFB5"} Tren 14 Hari â {selectedAccount?.name || "Pilih akun"}</h3>
+      <h3 style={{ color: COLORS.text, fontSize: 16, fontWeight: 700, marginTop: 0 }}>{platform === "ig" ? "\uD83D\uDCF8" : "\uD83C\uDFB5"} Tren 14 Hari — {selectedAccount?.name || "Pilih akun"}</h3>
       <div style={{ color: COLORS.textMuted, textAlign: "center", padding: 40 }}>{selectedAccount ? "Data tidak tersedia untuk akun ini" : "Pilih akun untuk melihat tren"}</div>
     </Card>
   );
   return (
     <Card>
-      <h3 style={{ color: COLORS.text, fontSize: 16, fontWeight: 700, marginTop: 0 }}>{platform === "ig" ? "\uD83D\uDCF8" : "\uD83C\uDFB5"} Tren 14 Hari â {selectedAccount.name}</h3>
+      <h3 style={{ color: COLORS.text, fontSize: 16, fontWeight: 700, marginTop: 0 }}>{platform === "ig" ? "\uD83D\uDCF8" : "\uD83C\uDFB5"} Tren 14 Hari — {selectedAccount.name}</h3>
       <ResponsiveContainer width="100%" height={240}>
         <LineChart data={accountHistory} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
           <XAxis dataKey="date" tick={{ fill: COLORS.textMuted, fontSize: 10 }} />
           <YAxis tick={{ fill: COLORS.textMuted, fontSize: 10 }} domain={["dataMin - 100", "dataMax + 100"]} tickFormatter={formatNum} />
-          <Tooltip contentStyle={{ background: "#1e293b", border: "1px solid #334155", borderRadius: 8, color: "#fff" }} formatter={(val) => [formatFull(val), "Followers"]} />
+          <Tooltip contentStyle={{ background: "#1e293b", border: "1px solid #334155", borderRadius: 8, color: "#fff" }} itemStyle={{ color: "#fff" }} labelStyle={{ color: "#94a3b8" }} formatter={(val) => [formatFull(val), "Followers"]} />
           <Line type="monotone" dataKey="f" stroke={platform === "ig" ? COLORS.ig : COLORS.tiktok} strokeWidth={3} dot={{ fill: platform === "ig" ? COLORS.ig : COLORS.tiktok, r: 3 }} activeDot={{ r: 6 }} />
         </LineChart>
       </ResponsiveContainer>
@@ -369,7 +373,7 @@ const RankingTable = ({ platform }) => {
   }).filter((r) => r.data).sort((a, b) => (b.data.change ?? -Infinity) - (a.data.change ?? -Infinity));
   return (
     <Card>
-      <h3 style={{ color: COLORS.text, fontSize: 16, fontWeight: 700, marginTop: 0, marginBottom: 12 }}>{platform === "ig" ? "\uD83D\uDCF8 Instagram" : "\uD83C\uDFB5 TikTok"} â Ranking Pertumbuhan Hari Ini</h3>
+      <h3 style={{ color: COLORS.text, fontSize: 16, fontWeight: 700, marginTop: 0, marginBottom: 12 }}>{platform === "ig" ? "\uD83D\uDCF8 Instagram" : "\uD83C\uDFB5 TikTok"} — Ranking Pertumbuhan Hari Ini</h3>
       <table style={{ width: "100%", borderCollapse: "collapse" }}>
         <thead>
           <tr style={{ borderBottom: "1px solid " + COLORS.cardBorder }}>
@@ -400,6 +404,8 @@ function MarketingDashboard() {
   const [selectedIgAccount, setSelectedIgAccount] = useState(accounts[0]);
   const [selectedTiktokAccount, setSelectedTiktokAccount] = useState(accounts[0]);
   const [activeTab, setActiveTab] = useState("overview");
+  const [wibTime, setWibTime] = useState(new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }));
+  React.useEffect(() => { const timer = setInterval(() => { setWibTime(new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })); }, 1000); return () => clearInterval(timer); }, []);
   const tabs = [
     { key: "overview", label: "Overview" },
     { key: "instagram", label: "\uD83D\uDCF8 Instagram" },
@@ -409,7 +415,7 @@ function MarketingDashboard() {
     <div style={{ background: COLORS.bg, minHeight: "100vh", color: COLORS.text, fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", padding: "24px 32px" }}>
       <div style={{ marginBottom: 28 }}>
         <h1 style={{ fontSize: 28, fontWeight: 800, margin: 0, letterSpacing: -0.5 }}>Marketing Dashboard</h1>
-        <p style={{ color: COLORS.textMuted, fontSize: 14, margin: "6px 0 0" }}>Data SocialBlade â 9 April 2026 | 8 Akun | Instagram & TikTok</p>
+        <p style={{ color: COLORS.textMuted, fontSize: 14, margin: "6px 0 0" }}>Data SocialBlade — 10 April 2026 | {wibTime} WIB | 13 Akun | Instagram &amp; TikTok</p>
       </div>
       <div style={{ display: "flex", gap: 4, marginBottom: 24, background: COLORS.cardBg, borderRadius: 12, padding: 4, width: "fit-content" }}>
         {tabs.map((t) => (
@@ -431,7 +437,7 @@ function MarketingDashboard() {
       )}
       {activeTab === "instagram" && (
         <>
-          <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 16, marginTop: 0 }}>Instagram â Diurutkan Pertumbuhan Tertinggi</h2>
+          <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 16, marginTop: 0 }}>Instagram — Diurutkan Pertumbuhan Tertinggi</h2>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 24 }}>
             {[...accounts].sort((a, b) => (igData[b.ig]?.change ?? -Infinity) - (igData[a.ig]?.change ?? -Infinity)).map((acc, i) => (
               <AccountCard key={i} acc={acc} platform="ig" isSelected={selectedIgAccount?.name === acc.name} onClick={() => setSelectedIgAccount(acc)} />
@@ -446,7 +452,7 @@ function MarketingDashboard() {
       )}
       {activeTab === "tiktok" && (
         <>
-          <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 16, marginTop: 0 }}>TikTok â Diurutkan Pertumbuhan Tertinggi</h2>
+          <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 16, marginTop: 0 }}>TikTok — Diurutkan Pertumbuhan Tertinggi</h2>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 24 }}>
             {[...accounts].sort((a, b) => { const dA = tiktokData[a.tiktok || a.ig]; const dB = tiktokData[b.tiktok || b.ig]; return (dB?.change ?? -Infinity) - (dA?.change ?? -Infinity); }).map((acc, i) => (
               <AccountCard key={i} acc={acc} platform="tiktok" isSelected={selectedTiktokAccount?.name === acc.name} onClick={() => setSelectedTiktokAccount(acc)} />
