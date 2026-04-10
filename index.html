@@ -134,6 +134,14 @@
         .insight-row { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; background: #0f172a; border-radius: 8px; margin-bottom: 8px; font-size: 12px; color: #cbd5e1; line-height: 1.6; }
         .insight-icon { font-size: 16px; flex-shrink: 0; }
 
+        /* Actions */
+        .actions-box { background: linear-gradient(135deg, #10b98122 0%, #0f172a 100%); border: 2px solid #10b981; border-radius: 12px; padding: 20px; }
+        .action-row { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; background: #0f172a; border-radius: 10px; margin-bottom: 10px; font-size: 13px; color: #e2e8f0; line-height: 1.6; border-left: 3px solid #10b981; }
+        .action-num { background: #10b981; color: #fff; min-width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; flex-shrink: 0; }
+        .action-content { flex: 1; }
+        .action-title { font-weight: 800; color: #10b981; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+        .action-desc { color: #cbd5e1; font-size: 12px; line-height: 1.55; }
+
         @media (max-width: 768px) {
             body { padding: 16px; }
             .momentum-grid { grid-template-columns: 1fr; }
@@ -148,36 +156,8 @@
 
     <div class="controls">
         <div class="period-toggle">
-            <button class="period-btn today active" onclick="setPeriod('today')">📊 Hari Ini</button>
-            <button class="period-btn yesterday" onclick="setPeriod('yesterday')">📋 Kemarin</button>
-        </div>
-    </div>
-
-    <div class="section-title">🎯 Kesimpulan Hari Ini (CEO Mode)</div>
-    <div class="ceo-cards">
-        <div class="ceo-card winner">
-            <div class="card-label winner">🏆 Pemenang</div>
-            <div class="card-name" id="ceoWinner">CPNS.ASN</div>
-            <div class="card-value winner" id="ceoWinnerVal">+456</div>
-            <div class="card-subtitle">IG Growth tertinggi</div>
-        </div>
-        <div class="ceo-card threat">
-            <div class="card-label threat">⚠️ Ancaman</div>
-            <div class="card-name" id="ceoThreat">AYOCPNS</div>
-            <div class="card-value threat" id="ceoThreatVal">-100</div>
-            <div class="card-subtitle">TT Menurun</div>
-        </div>
-        <div class="ceo-card opportunity">
-            <div class="card-label opportunity">💡 Peluang</div>
-            <div class="card-name">PRIVATALFAIZ</div>
-            <div class="card-value opportunity">645K</div>
-            <div class="card-subtitle">Google Traffic #1</div>
-        </div>
-        <div class="ceo-card attention">
-            <div class="card-label attention">🔔 Perlu Perhatian</div>
-            <div class="card-name">JADIASN ⭐</div>
-            <div class="card-value attention">+102</div>
-            <div class="card-subtitle">Platform utama</div>
+            <button class="period-btn today" onclick="setPeriod('today')">📊 Hari Ini</button>
+            <button class="period-btn yesterday active" onclick="setPeriod('yesterday')">📋 Kemarin</button>
         </div>
     </div>
 
@@ -190,6 +170,32 @@
 
     <!-- INSTAGRAM TAB -->
     <div class="tab-content active" id="tab-ig">
+        <div class="section-title">📷 Analisis Followers Instagram — 14 Akun</div>
+
+        <div class="momentum-box" style="background: linear-gradient(135deg, #E1306C22 0%, transparent 100%); border: 2px solid #E1306C; margin-bottom: 24px;">
+            <div style="font-size: 13px; font-weight: 700; color: #E1306C; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;">⭐ JADIASN Instagram Performance — <span id="igPeriodLabel">Kemarin</span></div>
+            <div style="display: flex; gap: 28px; flex-wrap: wrap; align-items: center;">
+                <div>
+                    <div style="font-size: 32px; font-weight: 800; color: #f59e0b;">573,230</div>
+                    <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase;">Total Followers</div>
+                </div>
+                <div>
+                    <div style="font-size: 20px; font-weight: 700; color: #10b981;" id="igJadiasnRank">Rank #-</div>
+                    <div style="font-size: 11px; color: #94a3b8;">peringkat growth</div>
+                </div>
+                <div>
+                    <div style="font-size: 16px; font-weight: 700; color: #10b981;" id="igJadiasnGrowth">+0</div>
+                    <div style="font-size: 11px; color: #94a3b8;">Pertambahan followers</div>
+                </div>
+                <div>
+                    <div style="font-size: 16px; font-weight: 700; color: #cbd5e1;" id="igJadiasnShare">0% Growth Share</div>
+                    <div style="font-size: 11px; color: #94a3b8;">dari total growth hari terpilih</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="traffic-grid" id="igAccounts"></div>
+
         <div class="section-title">📈 Momentum Instagram (3 hari terakhir)</div>
         <div class="momentum-box">
             <div class="momentum-grid">
@@ -232,12 +238,70 @@
             </div>
         </div>
 
-        <div class="section-title">📱 Semua Akun Instagram (14)</div>
-        <div class="accounts-grid" id="igAccounts"></div>
+        <div class="section-title">💡 Key Insights Instagram</div>
+        <div class="insights-box">
+            <div class="insight-row"><span class="insight-icon">🏆</span><span><strong>CPNS.ASN DOMINAN GROWTH</strong> — Rank #1 pertambahan followers (+456 hari ini / +1,436 kemarin) dengan 1.25M total followers. Mereka konsisten mengalahkan JADIASN di segmen growth meski ukuran hampir sama. Content velocity + format mereka menjadi benchmark utama.</span></div>
+            <div class="insight-row"><span class="insight-icon">⚠️</span><span><strong>JADIASN GROWTH UNDERPERFORM</strong> — Rank #6-7 growth (+102 / +127) dari 14 akun. Dengan 573K followers (rank total #4), JADIASN seharusnya bisa growth lebih tinggi. Posting 7x/hari tapi output growth rendah → indikasi kualitas konten / hook / CTA perlu improve.</span></div>
+            <div class="insight-row"><span class="insight-icon">🔥</span><span><strong>STUDICPNS.ID KONSISTEN PUSH</strong> — Growth +360 hari ini, +1,107 kemarin, rank #2-3 growth. Dengan followers lebih kecil (595K), mereka growth rate lebih tinggi dari JADIASN. Perlu diwaspadai sebagai challenger utama.</span></div>
+            <div class="insight-row"><span class="insight-icon">💎</span><span><strong>VIRACUN.ID ENGAGEMENT CHAMPION</strong> — Engagement rate 0.52% tertinggi di antara top 10 akun. Dengan 255K followers, mereka viral potential paling besar per posting. Format & hook mereka worth direplikasi.</span></div>
+            <div class="insight-row"><span class="insight-icon">📊</span><span><strong>OLIGOPOLI SEGMEN ATAS</strong> — 2 akun >1M (CPNS.ASN 1.25M, INTENSIFCPNS 1.07M) menguasai top-of-mind. JADIASN di posisi #4 dengan 573K. Gap ke top-2 = ~700K followers → target 2026: catch up minimal ke 1M.</span></div>
+        </div>
+
+        <div class="section-title">⚡ 3 Action yang Bisa Dilakukan Sekarang — Instagram</div>
+        <div class="actions-box">
+            <div class="action-row">
+                <div class="action-num">1</div>
+                <div class="action-content">
+                    <div class="action-title">AUDIT KONTEN vs CPNS.ASN (Hari ini)</div>
+                    <div class="action-desc">Ambil 10 postingan terbaru CPNS.ASN + 10 postingan terbaru JADIASN. Bandingkan hook (3 detik pertama), caption structure, visual quality, CTA. Tuliskan 5 perbedaan konkret. Briefing ke tim content creator hari ini juga.</div>
+                </div>
+            </div>
+            <div class="action-row">
+                <div class="action-num">2</div>
+                <div class="action-content">
+                    <div class="action-title">REPLIKASI FORMAT VIRACUN.ID (Minggu ini)</div>
+                    <div class="action-desc">Test 3 posting JADIASN minggu ini pakai format & hook VIRACUN.ID (eng rate 0.52% tertinggi). Track engagement 48 jam pertama. Jika metric naik ≥30% vs baseline JADIASN → adopsi sebagai format standar.</div>
+                </div>
+            </div>
+            <div class="action-row">
+                <div class="action-num">3</div>
+                <div class="action-content">
+                    <div class="action-title">KURANGI VOLUME, NAIKKAN KUALITAS (Mulai besok)</div>
+                    <div class="action-desc">Posting 7x/hari → turunkan ke 4x/hari. Alokasikan waktu produksi untuk quality control: script review, thumbnail A/B, caption copywriting. Target: growth/post naik dari ~15 followers ke ~40 followers dalam 7 hari.</div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- TIKTOK TAB -->
     <div class="tab-content" id="tab-tiktok">
+        <div class="section-title">🎬 Analisis Followers TikTok — 7 Akun</div>
+
+        <div class="momentum-box" style="background: linear-gradient(135deg, #00f2ea22 0%, transparent 100%); border: 2px solid #00f2ea; margin-bottom: 24px;">
+            <div style="font-size: 13px; font-weight: 700; color: #00f2ea; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;">🏆 JADIASN TikTok Performance — <span id="ttPeriodLabel">Kemarin</span></div>
+            <div style="display: flex; gap: 28px; flex-wrap: wrap; align-items: center;">
+                <div>
+                    <div style="font-size: 32px; font-weight: 800; color: #f59e0b;">1,300,000</div>
+                    <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase;">Total Followers</div>
+                </div>
+                <div>
+                    <div style="font-size: 20px; font-weight: 700; color: #10b981;" id="ttJadiasnRank">Rank #-</div>
+                    <div style="font-size: 11px; color: #94a3b8;">peringkat growth</div>
+                </div>
+                <div>
+                    <div style="font-size: 16px; font-weight: 700; color: #10b981;" id="ttJadiasnGrowth">+0</div>
+                    <div style="font-size: 11px; color: #94a3b8;">Pertambahan followers</div>
+                </div>
+                <div>
+                    <div style="font-size: 16px; font-weight: 700; color: #cbd5e1;" id="ttJadiasnShare">0% Growth Share</div>
+                    <div style="font-size: 11px; color: #94a3b8;">dari total growth hari terpilih</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="traffic-grid" id="ttAccounts"></div>
+
         <div class="section-title">📈 Momentum TikTok (3 hari terakhir)</div>
         <div class="momentum-box">
             <div class="momentum-grid">
@@ -280,8 +344,40 @@
             </div>
         </div>
 
-        <div class="section-title">🎬 Semua Akun TikTok (7)</div>
-        <div class="accounts-grid" id="ttAccounts"></div>
+        <div class="section-title">💡 Key Insights TikTok</div>
+        <div class="insights-box">
+            <div class="insight-row"><span class="insight-icon">🏆</span><span><strong>JADIASN = MARKET LEADER (Total Followers)</strong> — 1.3M followers, jauh di atas kompetitor #2 PRIVATALFAIZ (899K). Posisi strategis sangat kuat. Tapi... (lihat insight berikut).</span></div>
+            <div class="insight-row"><span class="insight-icon">⚠️</span><span><strong>JADIASN GROWTH STAGNAN</strong> — 0 followers/hari (hari ini & kemarin). Rank #4 di tabel growth. Dengan base 1.3M, stagnasi ini berarti algoritma tidak lagi mendorong konten JADIASN. URGENT: perlu content refresh strategy.</span></div>
+            <div class="insight-row"><span class="insight-icon">🔥</span><span><strong>STUDICPNS.ID VIRAL EVENT</strong> — +6,000 followers kemarin dari base 54K (growth 11%/hari!). Ini bukan growth biasa — ada video/format yang viral. Wajib audit: video mana yang trigger? Format apa? Sound apa? Hook apa?</span></div>
+            <div class="insight-row"><span class="insight-icon">📈</span><span><strong>PRIVATALFAIZ KONSISTEN</strong> — +400/hari dengan 9.6M total likes. Mereka punya mesin content production yang stabil. Format video mereka replicatable dan proven di segmen CPNS yang sama dengan JADIASN.</span></div>
+            <div class="insight-row"><span class="insight-icon">💎</span><span><strong>VR_MAGHFIRAH HIDDEN GEM</strong> — Grade A-, +300/hari di base 547K. Growth rate lebih sehat dari JADIASN. Content mereka high-quality tapi belum mass-market → peluang untuk partnership atau adopsi format.</span></div>
+        </div>
+
+        <div class="section-title">⚡ 3 Action yang Bisa Dilakukan Sekarang — TikTok</div>
+        <div class="actions-box">
+            <div class="action-row">
+                <div class="action-num">1</div>
+                <div class="action-content">
+                    <div class="action-title">REVIVE JADIASN TIKTOK (Mulai hari ini)</div>
+                    <div class="action-desc">Upload 3 video/hari minggu ini untuk break algoritma stagnasi. Gunakan 3 format berbeda: (a) tips CPNS 15 detik, (b) fact-check viral 30 detik, (c) testimoni alumni 60 detik. Track impressions & followers setelah 7 hari.</div>
+                </div>
+            </div>
+            <div class="action-row">
+                <div class="action-num">2</div>
+                <div class="action-content">
+                    <div class="action-title">AUDIT VIRAL STUDICPNS.ID (Hari ini)</div>
+                    <div class="action-desc">STUDICPNS.ID +6,000 followers kemarin — ini anomali. Cek profil mereka sekarang: mana video dengan view terbanyak 48 jam terakhir? Screenshot hook, caption, sound, CTA. Reverse-engineer format → replikasi untuk JADIASN minggu depan.</div>
+                </div>
+            </div>
+            <div class="action-row">
+                <div class="action-num">3</div>
+                <div class="action-content">
+                    <div class="action-title">REPLIKASI FORMAT PRIVATALFAIZ (Minggu ini)</div>
+                    <div class="action-desc">PRIVATALFAIZ growth +400/hari stabil dengan 9.6M likes. Pilih 5 video top-performing mereka, catat: durasi, hook, pacing, music, caption pattern. Produce 5 video JADIASN dengan format yang sama → A/B test vs format lama.</div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- GOOGLE TAB -->
@@ -445,6 +541,31 @@
             <div class="insight-row"><span class="insight-icon">🏆</span><span><strong>privatalfaiz.id MASIH LEADER</strong> — 645K visits (5.6x JADIASN total), growth +40%. Mereka unggul di SCALE. Strategi: adopt content velocity mereka dengan quality kita.</span></div>
             <div class="insight-row"><span class="insight-icon">🎯</span><span><strong>STRATEGI JADIASN:</strong> (1) Fix akuisisi app.jadiasn.id secepatnya, (2) Scale content production di jadiasn.id untuk catch up privatalfaiz, (3) Optimize conversion funnel jadiasn.id → app.jadiasn.id.</span></div>
         </div>
+
+        <div class="section-title">⚡ 3 Action yang Bisa Dilakukan Sekarang — Google Traffic</div>
+        <div class="actions-box">
+            <div class="action-row">
+                <div class="action-num">1</div>
+                <div class="action-content">
+                    <div class="action-title">AUDIT FUNNEL APP.JADIASN.ID (Hari ini)</div>
+                    <div class="action-desc">App.jadiasn.id drop -24.45% padahal quality metrics #1 (pages/visit 8.23, durasi 6:18). Masalahnya di akuisisi, bukan retensi. Cek sekarang: Google Search Console (query yg hilang?), Analytics source/medium (paid ads berhenti? referral hilang?), funnel jadiasn.id → app.jadiasn.id (CTA masih ada?). Tulis report root cause dalam 24 jam.</div>
+                </div>
+            </div>
+            <div class="action-row">
+                <div class="action-num">2</div>
+                <div class="action-content">
+                    <div class="action-title">LAUNCH 10 KONTEN SEO BARU DI JADIASN.ID (Minggu ini)</div>
+                    <div class="action-desc">privatalfaiz.id 645K visits (5.6x JADIASN) karena content velocity. Catch up strategy: identifikasi 10 keyword CPNS dengan search volume tinggi yang BELUM dikover JADIASN. Produce 10 artikel long-form (2000+ kata) minggu ini. Target: +15% organic traffic dalam 30 hari.</div>
+                </div>
+            </div>
+            <div class="action-row">
+                <div class="action-num">3</div>
+                <div class="action-content">
+                    <div class="action-title">STEAL TRAFFIC DARI AYOCPNS (2 minggu)</div>
+                    <div class="action-desc">Ayocpns 90K visits tapi durasi rata-rata 0:44 (traffic low quality, bounce tinggi). User mereka tidak puas → peluang direbut. Action: (a) scrape top 20 keyword ayocpns via Ahrefs/Semrush, (b) buat konten 10x lebih dalam untuk keyword yg sama, (c) pasang internal linking ke app.jadiasn.id untuk konversi. Target: steal 10K visits/bulan.</div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -517,7 +638,7 @@ const googleData = [
     { name: "STUDICPNS.ID", domain: "studicpns.id", visits: 4448, growth: 35.59, ours: false },
 ];
 
-let currentPeriod = "today";
+let currentPeriod = "yesterday";
 let currentCategory = "ig";
 
 function setPeriod(p) {
@@ -554,51 +675,140 @@ function getMomentumClass(change, avgChange) {
     return 'down';
 }
 
+function gradeToStars(grade) {
+    if (!grade) return '★★★☆☆';
+    if (grade === 'A+' || grade === 'A') return '★★★★★';
+    if (grade === 'A-') return '★★★★★';
+    if (grade === 'B+') return '★★★★☆';
+    if (grade === 'B') return '★★★★☆';
+    if (grade === 'B-') return '★★★☆☆';
+    if (grade === 'C+' || grade === 'C') return '★★★☆☆';
+    if (grade === 'C-') return '★★☆☆☆';
+    if (grade === 'D') return '★☆☆☆☆';
+    return '★★★☆☆';
+}
+
+function gradeColor(grade) {
+    if (!grade) return '#94a3b8';
+    if (grade.startsWith('A')) return '#10b981';
+    if (grade === 'B+' || grade === 'B') return '#10b981';
+    if (grade === 'B-') return '#eab308';
+    if (grade.startsWith('C')) return '#eab308';
+    return '#ef4444';
+}
+
+function fmtFull(n) {
+    return n.toLocaleString('en-US');
+}
+
+function buildAccountCard(rank, name, handle, followers, change, metrics, isOurs) {
+    const card = document.createElement('div');
+    card.className = 'traffic-card';
+    if (isOurs) {
+        card.style.cssText = 'border: 2px solid #f59e0b; background: linear-gradient(135deg, #f59e0b22 0%, transparent 100%);';
+    } else if (rank === 1) {
+        card.className = 'traffic-card rank-1';
+    } else if (rank === 2) {
+        card.className = 'traffic-card rank-2';
+    }
+    const rankStyle = isOurs ? ' style="color:#f59e0b;"' : '';
+    const nameStyle = isOurs ? ' style="color:#f59e0b;"' : '';
+    const numStyle = isOurs ? ' style="color:#f59e0b;"' : '';
+    const changeNum = Number(change) || 0;
+    const growthBadge = changeNum > 0
+        ? `<div class="traffic-growth up">▲ +${changeNum}</div>`
+        : changeNum < 0
+            ? `<div class="traffic-growth" style="background:#ef444433;color:#ef4444;">▼ ${changeNum}</div>`
+            : `<div class="traffic-growth" style="background:#eab30833;color:#eab308;">● ±0</div>`;
+
+    const metricsHtml = metrics.map(m =>
+        `<div><div class="traffic-metric-label">${m.label}</div><div class="traffic-metric-value"${m.color ? ` style="color:${m.color};"` : ''}>${m.value}</div></div>`
+    ).join('');
+
+    card.innerHTML = `
+        <div class="traffic-rank"${rankStyle}>#${rank}${isOurs ? ' ⭐' : ''}</div>
+        <div class="traffic-domain"${nameStyle}>${name}</div>
+        <div class="traffic-subdomain">@${handle}</div>
+        <div class="traffic-visits"${numStyle}>${fmtFull(followers)}</div>
+        <div class="traffic-visits-label">Followers</div>
+        ${growthBadge}
+        <div class="traffic-metrics">${metricsHtml}</div>
+    `;
+    return card;
+}
+
 function renderAccounts() {
-    // IG accounts
+    // IG — sort by follower growth (change) desc
     const igContainer = document.getElementById('igAccounts');
     igContainer.innerHTML = '';
-    const sortedIG = [...accounts].sort((a, b) => (b.name === 'JADIASN' ? 0 : -1) - (a.name === 'JADIASN' ? 0 : -1));
-    sortedIG.forEach(acc => {
-        if (!acc.ig) return;
-        const data = currentPeriod === 'today' ? igData[acc.ig] : { ...igData[acc.ig], change: igYesterday[acc.ig]?.change || 0 };
-        if (!data) return;
-        const card = document.createElement('div');
-        card.className = 'account-card' + (acc.ours ? ' ours' : '');
-        card.innerHTML = `
-            <div class="account-name">${acc.ours ? '<span class="account-star">⭐</span>' : ''}${acc.name}</div>
-            <div class="account-handle">@${acc.ig}</div>
-            <div class="account-growth ${getGrowthClass(data.change)}">${data.change >= 0 ? '+' : ''}${data.change}</div>
-            <div class="account-stats">
-                <div class="stat-row"><span class="stat-label">Followers</span><span class="stat-value">${fmtNum(data.followers)}</span></div>
-                <div class="stat-row"><span class="stat-label">Engagement</span><span class="stat-value">${data.eng}%</span></div>
-                <div class="stat-row"><span class="stat-label">Grade</span><span class="stat-value">${data.grade}</span></div>
-            </div>
-        `;
-        igContainer.appendChild(card);
+    const igList = accounts
+        .filter(a => a.ig && igData[a.ig])
+        .map(a => {
+            const base = igData[a.ig];
+            const change = currentPeriod === 'today' ? base.change : (igYesterday[a.ig]?.change || 0);
+            return { acc: a, data: base, change };
+        })
+        .sort((a, b) => b.change - a.change);
+
+    igList.forEach((item, idx) => {
+        const rank = idx + 1;
+        const metrics = [
+            { label: 'Followers', value: fmtFull(item.data.followers) },
+            { label: 'Engagement', value: item.data.eng + '%' },
+            { label: 'Grade', value: item.data.grade, color: gradeColor(item.data.grade) },
+            { label: 'Quality', value: gradeToStars(item.data.grade), color: gradeColor(item.data.grade) },
+        ];
+        igContainer.appendChild(buildAccountCard(rank, item.acc.name, item.acc.ig, item.data.followers, item.change, metrics, item.acc.ours));
     });
 
-    // TikTok accounts
+    // Update IG summary box
+    const igJadiasn = igList.find(x => x.acc.ours);
+    const igTotalGrowth = igList.reduce((s, x) => s + Math.max(0, x.change), 0);
+    const igRankIdx = igList.findIndex(x => x.acc.ours);
+    if (igJadiasn) {
+        document.getElementById('igPeriodLabel').textContent = currentPeriod === 'today' ? 'Hari Ini' : 'Kemarin';
+        document.getElementById('igJadiasnRank').textContent = 'Rank #' + (igRankIdx + 1);
+        document.getElementById('igJadiasnGrowth').textContent = (igJadiasn.change >= 0 ? '+' : '') + igJadiasn.change + ' followers';
+        document.getElementById('igJadiasnGrowth').style.color = igJadiasn.change > 0 ? '#10b981' : igJadiasn.change < 0 ? '#ef4444' : '#eab308';
+        const sharePct = igTotalGrowth > 0 ? ((Math.max(0, igJadiasn.change) / igTotalGrowth) * 100).toFixed(2) : '0';
+        document.getElementById('igJadiasnShare').textContent = sharePct + '% Growth Share';
+    }
+
+    // TikTok — sort by follower growth (change) desc
     const ttContainer = document.getElementById('ttAccounts');
     ttContainer.innerHTML = '';
-    sortedIG.forEach(acc => {
-        if (!acc.tiktok) return;
-        const data = currentPeriod === 'today' ? ttData[acc.tiktok] : { ...ttData[acc.tiktok], change: ttYesterday[acc.tiktok]?.change || 0 };
-        if (!data) return;
-        const card = document.createElement('div');
-        card.className = 'account-card' + (acc.ours ? ' ours' : '');
-        card.innerHTML = `
-            <div class="account-name">${acc.ours ? '<span class="account-star">⭐</span>' : ''}${acc.name}</div>
-            <div class="account-handle">@${acc.tiktok}</div>
-            <div class="account-growth ${getGrowthClass(data.change)}">${data.change >= 0 ? '+' : ''}${data.change}</div>
-            <div class="account-stats">
-                <div class="stat-row"><span class="stat-label">Followers</span><span class="stat-value">${fmtNum(data.followers)}</span></div>
-                <div class="stat-row"><span class="stat-label">Total Likes</span><span class="stat-value">${data.likes}</span></div>
-                <div class="stat-row"><span class="stat-label">Grade</span><span class="stat-value">${data.grade}</span></div>
-            </div>
-        `;
-        ttContainer.appendChild(card);
+    const ttList = accounts
+        .filter(a => a.tiktok && ttData[a.tiktok])
+        .map(a => {
+            const base = ttData[a.tiktok];
+            const change = currentPeriod === 'today' ? base.change : (ttYesterday[a.tiktok]?.change || 0);
+            return { acc: a, data: base, change };
+        })
+        .sort((a, b) => b.change - a.change);
+
+    ttList.forEach((item, idx) => {
+        const rank = idx + 1;
+        const metrics = [
+            { label: 'Followers', value: fmtFull(item.data.followers) },
+            { label: 'Total Likes', value: item.data.likes },
+            { label: 'Grade', value: item.data.grade, color: gradeColor(item.data.grade) },
+            { label: 'Quality', value: gradeToStars(item.data.grade), color: gradeColor(item.data.grade) },
+        ];
+        ttContainer.appendChild(buildAccountCard(rank, item.acc.name, item.acc.tiktok, item.data.followers, item.change, metrics, item.acc.ours));
     });
+
+    // Update TikTok summary box
+    const ttJadiasn = ttList.find(x => x.acc.ours);
+    const ttTotalGrowth = ttList.reduce((s, x) => s + Math.max(0, x.change), 0);
+    const ttRankIdx = ttList.findIndex(x => x.acc.ours);
+    if (ttJadiasn) {
+        document.getElementById('ttPeriodLabel').textContent = currentPeriod === 'today' ? 'Hari Ini' : 'Kemarin';
+        document.getElementById('ttJadiasnRank').textContent = 'Rank #' + (ttRankIdx + 1);
+        document.getElementById('ttJadiasnGrowth').textContent = (ttJadiasn.change >= 0 ? '+' : '') + ttJadiasn.change + ' followers';
+        document.getElementById('ttJadiasnGrowth').style.color = ttJadiasn.change > 0 ? '#10b981' : ttJadiasn.change < 0 ? '#ef4444' : '#eab308';
+        const sharePct = ttTotalGrowth > 0 ? ((Math.max(0, ttJadiasn.change) / ttTotalGrowth) * 100).toFixed(2) : '0';
+        document.getElementById('ttJadiasnShare').textContent = sharePct + '% Growth Share';
+    }
 }
 
 function renderMomentum() {
