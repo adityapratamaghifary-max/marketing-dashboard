@@ -4,419 +4,721 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Marketing Dashboard — JADIASN</title>
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/recharts/2.10.3/Recharts.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prop-types/15.8.1/prop-types.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0f172a; color: #f8fafc;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            padding: 24px 32px; min-height: 100vh;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px 0; }
+        .subtitle { color: #94a3b8; font-size: 14px; margin: 0 0 24px 0; }
+
+        .controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; gap: 12px; flex-wrap: wrap; }
+        .period-toggle { display: flex; gap: 4px; background: #1e293b; border-radius: 12px; padding: 4px; }
+        .period-btn { padding: 8px 16px; border-radius: 10px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; color: #94a3b8; background: transparent; }
+        .period-btn.active.today { background: #166534; color: #fff; }
+        .period-btn.active.yesterday { background: #1e40af; color: #fff; }
+
+        .section-title { font-size: 14px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 16px; margin-top: 28px; letter-spacing: 0.5px; }
+
+        /* CEO Mode */
+        .ceo-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 8px; }
+        .ceo-card { border-radius: 12px; padding: 16px; border: 2px solid; }
+        .ceo-card.winner { background: linear-gradient(135deg, #10b98122 0%, transparent 100%); border-color: #10b98166; }
+        .ceo-card.threat { background: linear-gradient(135deg, #ef444422 0%, transparent 100%); border-color: #ef444466; }
+        .ceo-card.opportunity { background: linear-gradient(135deg, #3b82f622 0%, transparent 100%); border-color: #3b82f666; }
+        .ceo-card.attention { background: linear-gradient(135deg, #f59e0b22 0%, transparent 100%); border-color: #f59e0b; border-width: 2px; }
+        .card-label { font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; }
+        .card-label.winner { color: #10b981; }
+        .card-label.threat { color: #ef4444; }
+        .card-label.opportunity { color: #3b82f6; }
+        .card-label.attention { color: #f59e0b; }
+        .card-name { font-size: 18px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
+        .card-value { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+        .card-value.winner { color: #10b981; }
+        .card-value.threat { color: #ef4444; }
+        .card-value.opportunity { color: #3b82f6; }
+        .card-value.attention { color: #f59e0b; }
+        .card-subtitle { font-size: 11px; color: #94a3b8; }
+
+        /* Category Tabs */
+        .category-tabs { display: flex; gap: 8px; background: #1e293b; padding: 6px; border-radius: 14px; margin-bottom: 24px; max-width: 560px; }
+        .cat-tab { flex: 1; padding: 12px 20px; border-radius: 10px; border: none; cursor: pointer; font-size: 14px; font-weight: 700; color: #94a3b8; background: transparent; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .cat-tab:hover { color: #f8fafc; }
+        .cat-tab.active.ig { background: linear-gradient(135deg, #E1306C 0%, #C13584 100%); color: #fff; box-shadow: 0 4px 12px rgba(225,48,108,0.3); }
+        .cat-tab.active.tiktok { background: linear-gradient(135deg, #00f2ea 0%, #0891b2 100%); color: #0f172a; box-shadow: 0 4px 12px rgba(0,242,234,0.3); }
+        .cat-tab.active.google { background: linear-gradient(135deg, #4285F4 0%, #34A853 100%); color: #fff; box-shadow: 0 4px 12px rgba(66,133,244,0.3); }
+
+        /* Tab Content */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Momentum Section */
+        .momentum-box { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 20px; margin-bottom: 24px; }
+        .momentum-title { font-size: 13px; font-weight: 700; color: #f8fafc; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+        .momentum-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+        .momentum-col { }
+        .momentum-col-title { font-size: 10px; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px; }
+        .momentum-col-title.up { color: #10b981; }
+        .momentum-col-title.stable { color: #eab308; }
+        .momentum-col-title.down { color: #ef4444; }
+        .momentum-item { padding: 8px 10px; background: #0f172a; border-radius: 8px; margin-bottom: 6px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .momentum-item.ours { border: 1px solid #f59e0b; background: linear-gradient(135deg, #f59e0b11, transparent); }
+        .momentum-item-name { color: #f8fafc; font-weight: 600; }
+        .momentum-item-val { font-weight: 700; font-size: 11px; }
+        .momentum-item-val.up { color: #10b981; }
+        .momentum-item-val.stable { color: #eab308; }
+        .momentum-item-val.down { color: #ef4444; }
+
+        /* Market Share */
+        .market-share { display: grid; grid-template-columns: 1fr; gap: 10px; }
+        .market-bar-row { display: grid; grid-template-columns: 140px 1fr 80px; gap: 12px; align-items: center; padding: 8px; background: #0f172a; border-radius: 8px; }
+        .market-bar-row.ours { background: linear-gradient(135deg, #f59e0b22, #0f172a); border: 1px solid #f59e0b; }
+        .market-bar-name { font-size: 12px; font-weight: 700; color: #f8fafc; display: flex; align-items: center; gap: 4px; }
+        .market-bar-container { background: #1e293b; height: 20px; border-radius: 6px; overflow: hidden; }
+        .market-bar-fill { height: 100%; background: linear-gradient(90deg, #6366f1, #8b5cf6); border-radius: 6px; transition: width 0.3s; }
+        .market-bar-fill.ours { background: linear-gradient(90deg, #f59e0b, #eab308); }
+        .market-bar-value { font-size: 11px; color: #94a3b8; text-align: right; font-weight: 600; }
+
+        /* Opportunities */
+        .opp-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+        .opp-card { padding: 16px; border-radius: 12px; border: 2px solid; }
+        .opp-card.push { background: linear-gradient(135deg, #10b98122, transparent); border-color: #10b98166; }
+        .opp-card.scale { background: linear-gradient(135deg, #3b82f622, transparent); border-color: #3b82f666; }
+        .opp-card.optimize { background: linear-gradient(135deg, #f59e0b22, transparent); border-color: #f59e0b66; }
+        .opp-label { font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px; }
+        .opp-label.push { color: #10b981; }
+        .opp-label.scale { color: #3b82f6; }
+        .opp-label.optimize { color: #f59e0b; }
+        .opp-name { font-size: 18px; font-weight: 800; color: #f8fafc; margin-bottom: 6px; }
+        .opp-action { font-size: 12px; color: #cbd5e1; line-height: 1.5; }
+
+        /* Accounts Grid */
+        .accounts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+        .account-card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 16px; }
+        .account-card.ours { border: 2px solid #f59e0b; background: linear-gradient(135deg, #f59e0b11 0%, transparent 100%); }
+        .account-name { font-size: 14px; font-weight: 700; color: #f8fafc; display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+        .account-star { color: #f59e0b; }
+        .account-handle { font-size: 10px; color: #64748b; margin-bottom: 10px; }
+        .account-growth { font-size: 22px; font-weight: 800; margin-bottom: 12px; }
+        .growth-positive { color: #10b981; }
+        .growth-negative { color: #ef4444; }
+        .growth-neutral { color: #94a3b8; }
+        .account-stats { font-size: 11px; line-height: 1.7; }
+        .stat-row { display: flex; justify-content: space-between; margin-bottom: 2px; }
+        .stat-label { color: #64748b; }
+        .stat-value { color: #f8fafc; font-weight: 600; }
+
+        /* Google Traffic */
+        .traffic-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 20px; }
+        .traffic-card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 18px; position: relative; overflow: hidden; }
+        .traffic-card.rank-1 { border: 2px solid #eab308; background: linear-gradient(135deg, #eab30822 0%, transparent 100%); }
+        .traffic-card.rank-2 { border: 2px solid #94a3b8; background: linear-gradient(135deg, #94a3b822 0%, transparent 100%); }
+        .traffic-card.rank-3 { border: 2px solid #f59e0b; background: linear-gradient(135deg, #f59e0b22 0%, transparent 100%); }
+        .traffic-rank { position: absolute; top: 12px; right: 14px; font-size: 20px; font-weight: 800; color: #64748b; }
+        .traffic-domain { font-size: 16px; font-weight: 800; color: #f8fafc; margin-bottom: 2px; }
+        .traffic-subdomain { font-size: 10px; color: #64748b; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .traffic-visits { font-size: 28px; font-weight: 800; color: #6366f1; margin-bottom: 2px; }
+        .traffic-visits-label { font-size: 10px; color: #94a3b8; text-transform: uppercase; margin-bottom: 12px; }
+        .traffic-growth { display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; margin-bottom: 12px; }
+        .traffic-growth.up { background: #10b98133; color: #10b981; }
+        .traffic-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding-top: 12px; border-top: 1px solid #334155; }
+        .traffic-metric-label { color: #64748b; text-transform: uppercase; font-size: 9px; margin-bottom: 2px; }
+        .traffic-metric-value { color: #f8fafc; font-weight: 700; font-size: 13px; }
+
+        /* Insights */
+        .insights-box { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 20px; }
+        .insights-title { font-size: 13px; font-weight: 700; color: #f8fafc; margin-bottom: 14px; }
+        .insight-row { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; background: #0f172a; border-radius: 8px; margin-bottom: 8px; font-size: 12px; color: #cbd5e1; line-height: 1.6; }
+        .insight-icon { font-size: 16px; flex-shrink: 0; }
+
+        @media (max-width: 768px) {
+            body { padding: 16px; }
+            .momentum-grid { grid-template-columns: 1fr; }
+            .category-tabs { max-width: 100%; }
+        }
+    </style>
 </head>
-<body style="margin: 0; padding: 0;">
-    <div id="root"></div>
+<body>
+<div class="container">
+    <h1>Marketing Dashboard</h1>
+    <p class="subtitle">Data SocialBlade & SimilarWeb — 10 April 2026 | 14 Akun | Instagram, TikTok & Google</p>
 
-    <script type="text/babel">
-const COLORS = {
-  ig: "#E1306C",
-  tiktok: "#00f2ea",
-  positive: "#22c55e",
-  negative: "#ef4444",
-  neutral: "#94a3b8",
-  cardBg: "#1e293b",
-  cardBorder: "#334155",
-  bg: "#0f172a",
-  text: "#f8fafc",
-  textMuted: "#94a3b8",
-  accent: "#6366f1",
-  ours: "#f59e0b",
-  oursBorder: "#f59e0b",
-};
+    <div class="controls">
+        <div class="period-toggle">
+            <button class="period-btn today active" onclick="setPeriod('today')">📊 Hari Ini</button>
+            <button class="period-btn yesterday" onclick="setPeriod('yesterday')">📋 Kemarin</button>
+        </div>
+    </div>
 
+    <div class="section-title">🎯 Kesimpulan Hari Ini (CEO Mode)</div>
+    <div class="ceo-cards">
+        <div class="ceo-card winner">
+            <div class="card-label winner">🏆 Pemenang</div>
+            <div class="card-name" id="ceoWinner">CPNS.ASN</div>
+            <div class="card-value winner" id="ceoWinnerVal">+456</div>
+            <div class="card-subtitle">IG Growth tertinggi</div>
+        </div>
+        <div class="ceo-card threat">
+            <div class="card-label threat">⚠️ Ancaman</div>
+            <div class="card-name" id="ceoThreat">AYOCPNS</div>
+            <div class="card-value threat" id="ceoThreatVal">-100</div>
+            <div class="card-subtitle">TT Menurun</div>
+        </div>
+        <div class="ceo-card opportunity">
+            <div class="card-label opportunity">💡 Peluang</div>
+            <div class="card-name">PRIVATALFAIZ</div>
+            <div class="card-value opportunity">645K</div>
+            <div class="card-subtitle">Google Traffic #1</div>
+        </div>
+        <div class="ceo-card attention">
+            <div class="card-label attention">🔔 Perlu Perhatian</div>
+            <div class="card-name">JADIASN ⭐</div>
+            <div class="card-value attention">+102</div>
+            <div class="card-subtitle">Platform utama</div>
+        </div>
+    </div>
+
+    <div class="section-title">📱 Pilih Kategori Analisis</div>
+    <div class="category-tabs">
+        <button class="cat-tab ig active" onclick="setCategory('ig')">📷 Instagram</button>
+        <button class="cat-tab tiktok" onclick="setCategory('tiktok')">🎬 TikTok</button>
+        <button class="cat-tab google" onclick="setCategory('google')">🌐 Google</button>
+    </div>
+
+    <!-- INSTAGRAM TAB -->
+    <div class="tab-content active" id="tab-ig">
+        <div class="section-title">📈 Momentum Instagram (3 hari terakhir)</div>
+        <div class="momentum-box">
+            <div class="momentum-grid">
+                <div class="momentum-col">
+                    <div class="momentum-col-title up">▲ NAIK (Growth Tinggi)</div>
+                    <div id="igMomentumUp"></div>
+                </div>
+                <div class="momentum-col">
+                    <div class="momentum-col-title stable">● STABIL</div>
+                    <div id="igMomentumStable"></div>
+                </div>
+                <div class="momentum-col">
+                    <div class="momentum-col-title down">▼ TURUN</div>
+                    <div id="igMomentumDown"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-title">📊 Market Share Instagram (Growth Hari Ini)</div>
+        <div class="momentum-box">
+            <div class="market-share" id="igMarketShare"></div>
+        </div>
+
+        <div class="section-title">🎯 Top 3 Opportunities Instagram</div>
+        <div class="opp-grid">
+            <div class="opp-card push">
+                <div class="opp-label push">PUSH POSTING</div>
+                <div class="opp-name">VIRACUN.ID</div>
+                <div class="opp-action">Engagement rate 0.52% tertinggi — push posting lebih banyak untuk viral potential maksimal.</div>
+            </div>
+            <div class="opp-card scale">
+                <div class="opp-label scale">SCALE STRATEGY</div>
+                <div class="opp-name">CPNS.ASN</div>
+                <div class="opp-action">Growth +456/hari stabil — replikasi strategi content mereka untuk JADIASN.</div>
+            </div>
+            <div class="opp-card optimize">
+                <div class="opp-label optimize">OPTIMASI KUALITAS</div>
+                <div class="opp-name">JADIASN ⭐</div>
+                <div class="opp-action">Posting 7x/hari tapi growth +102. Kurangi volume, tingkatkan kualitas konten.</div>
+            </div>
+        </div>
+
+        <div class="section-title">📱 Semua Akun Instagram (14)</div>
+        <div class="accounts-grid" id="igAccounts"></div>
+    </div>
+
+    <!-- TIKTOK TAB -->
+    <div class="tab-content" id="tab-tiktok">
+        <div class="section-title">📈 Momentum TikTok (3 hari terakhir)</div>
+        <div class="momentum-box">
+            <div class="momentum-grid">
+                <div class="momentum-col">
+                    <div class="momentum-col-title up">▲ NAIK</div>
+                    <div id="ttMomentumUp"></div>
+                </div>
+                <div class="momentum-col">
+                    <div class="momentum-col-title stable">● STABIL</div>
+                    <div id="ttMomentumStable"></div>
+                </div>
+                <div class="momentum-col">
+                    <div class="momentum-col-title down">▼ TURUN</div>
+                    <div id="ttMomentumDown"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-title">📊 Market Share TikTok (Growth Hari Ini)</div>
+        <div class="momentum-box">
+            <div class="market-share" id="ttMarketShare"></div>
+        </div>
+
+        <div class="section-title">🎯 Top 3 Opportunities TikTok</div>
+        <div class="opp-grid">
+            <div class="opp-card push">
+                <div class="opp-label push">PUSH POSTING</div>
+                <div class="opp-name">PRIVATALFAIZ</div>
+                <div class="opp-action">Growth +400/hari dengan 9.6M likes total. Scale content production.</div>
+            </div>
+            <div class="opp-card scale">
+                <div class="opp-label scale">SCALE STRATEGY</div>
+                <div class="opp-name">VR_MAGHFIRAH</div>
+                <div class="opp-action">Growth +300/hari, Grade A-. Replikasi format video yang viral.</div>
+            </div>
+            <div class="opp-card optimize">
+                <div class="opp-label optimize">OPTIMASI KUALITAS</div>
+                <div class="opp-name">JADIASN ⭐</div>
+                <div class="opp-action">1.3M followers tapi growth 0. Perlu reformulasi content TikTok strategy.</div>
+            </div>
+        </div>
+
+        <div class="section-title">🎬 Semua Akun TikTok (7)</div>
+        <div class="accounts-grid" id="ttAccounts"></div>
+    </div>
+
+    <!-- GOOGLE TAB -->
+    <div class="tab-content" id="tab-google">
+        <div class="section-title">🌐 Analisis Traffic Website (SimilarWeb) — 7 Domain</div>
+
+        <div class="momentum-box" style="background: linear-gradient(135deg, #f59e0b22 0%, transparent 100%); border: 2px solid #f59e0b; margin-bottom: 24px;">
+            <div style="font-size: 13px; font-weight: 700; color: #f59e0b; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">⭐ Kombinasi JADIASN Total (jadiasn.id + app.jadiasn.id)</div>
+            <div style="display: flex; gap: 24px; flex-wrap: wrap; align-items: center;">
+                <div>
+                    <div style="font-size: 32px; font-weight: 800; color: #f59e0b;">115,213</div>
+                    <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase;">Total Monthly Visits</div>
+                </div>
+                <div>
+                    <div style="font-size: 20px; font-weight: 700; color: #10b981;">Rank #2</div>
+                    <div style="font-size: 11px; color: #94a3b8;">dari 7 domain</div>
+                </div>
+                <div>
+                    <div style="font-size: 16px; font-weight: 700; color: #cbd5e1;">17.8% Market Share</div>
+                    <div style="font-size: 11px; color: #94a3b8;">dari total 5 kompetitor + 2 kita</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="traffic-grid">
+            <div class="traffic-card rank-1">
+                <div class="traffic-rank">#1</div>
+                <div class="traffic-domain">privatalfaiz.id</div>
+                <div class="traffic-subdomain">PRIVATALFAIZ</div>
+                <div class="traffic-visits">645,401</div>
+                <div class="traffic-visits-label">Monthly Visits</div>
+                <div class="traffic-growth up">▲ +40.22%</div>
+                <div class="traffic-metrics">
+                    <div><div class="traffic-metric-label">Durasi</div><div class="traffic-metric-value">05:46</div></div>
+                    <div><div class="traffic-metric-label">Pages/Visit</div><div class="traffic-metric-value">8.43</div></div>
+                    <div><div class="traffic-metric-label">Bounce</div><div class="traffic-metric-value">30.63%</div></div>
+                    <div><div class="traffic-metric-label">Quality</div><div class="traffic-metric-value" style="color:#10b981;">★★★★★</div></div>
+                </div>
+            </div>
+
+            <div class="traffic-card rank-2">
+                <div class="traffic-rank">#2</div>
+                <div class="traffic-domain">ayocpns.com</div>
+                <div class="traffic-subdomain">AYOCPNS</div>
+                <div class="traffic-visits">90,846</div>
+                <div class="traffic-visits-label">Monthly Visits</div>
+                <div class="traffic-growth up">▲ +17.56%</div>
+                <div class="traffic-metrics">
+                    <div><div class="traffic-metric-label">Durasi</div><div class="traffic-metric-value">00:44</div></div>
+                    <div><div class="traffic-metric-label">Pages/Visit</div><div class="traffic-metric-value">3.95</div></div>
+                    <div><div class="traffic-metric-label">Bounce</div><div class="traffic-metric-value">25.84%</div></div>
+                    <div><div class="traffic-metric-label">Quality</div><div class="traffic-metric-value" style="color:#eab308;">★★★☆☆</div></div>
+                </div>
+            </div>
+
+            <div class="traffic-card" style="border: 2px solid #f59e0b; background: linear-gradient(135deg, #f59e0b22 0%, transparent 100%);">
+                <div class="traffic-rank" style="color: #f59e0b;">#3 ⭐</div>
+                <div class="traffic-domain" style="color: #f59e0b;">jadiasn.id</div>
+                <div class="traffic-subdomain">JADIASN (WEBSITE UTAMA)</div>
+                <div class="traffic-visits" style="color: #f59e0b;">82,747</div>
+                <div class="traffic-visits-label">Monthly Visits</div>
+                <div class="traffic-growth up">▲ +3.07%</div>
+                <div class="traffic-metrics">
+                    <div><div class="traffic-metric-label">Durasi</div><div class="traffic-metric-value" style="color:#10b981;">05:37</div></div>
+                    <div><div class="traffic-metric-label">Pages/Visit</div><div class="traffic-metric-value" style="color:#10b981;">5.60</div></div>
+                    <div><div class="traffic-metric-label">Bounce</div><div class="traffic-metric-value">36.36%</div></div>
+                    <div><div class="traffic-metric-label">Quality</div><div class="traffic-metric-value" style="color:#10b981;">★★★★☆</div></div>
+                </div>
+            </div>
+
+            <div class="traffic-card">
+                <div class="traffic-rank">#4</div>
+                <div class="traffic-domain">viracun.id</div>
+                <div class="traffic-subdomain">VIRACUN.ID</div>
+                <div class="traffic-visits">59,765</div>
+                <div class="traffic-visits-label">Monthly Visits</div>
+                <div class="traffic-growth up">▲ +6.52%</div>
+                <div class="traffic-metrics">
+                    <div><div class="traffic-metric-label">Durasi</div><div class="traffic-metric-value" style="color:#10b981;">07:54 🔥</div></div>
+                    <div><div class="traffic-metric-label">Pages/Visit</div><div class="traffic-metric-value">4.04</div></div>
+                    <div><div class="traffic-metric-label">Bounce</div><div class="traffic-metric-value">34.59%</div></div>
+                    <div><div class="traffic-metric-label">Quality</div><div class="traffic-metric-value" style="color:#10b981;">★★★★★</div></div>
+                </div>
+            </div>
+
+            <div class="traffic-card" style="border: 2px solid #f59e0b; background: linear-gradient(135deg, #f59e0b22 0%, transparent 100%);">
+                <div class="traffic-rank" style="color: #f59e0b;">#5 ⭐</div>
+                <div class="traffic-domain" style="color: #f59e0b;">app.jadiasn.id</div>
+                <div class="traffic-subdomain">JADIASN (APP/LMS)</div>
+                <div class="traffic-visits" style="color: #f59e0b;">32,466</div>
+                <div class="traffic-visits-label">Monthly Visits</div>
+                <div class="traffic-growth" style="background:#ef444433;color:#ef4444;">▼ -24.45%</div>
+                <div class="traffic-metrics">
+                    <div><div class="traffic-metric-label">Durasi</div><div class="traffic-metric-value" style="color:#10b981;">06:18 🔥</div></div>
+                    <div><div class="traffic-metric-label">Pages/Visit</div><div class="traffic-metric-value" style="color:#10b981;">8.23 🏆</div></div>
+                    <div><div class="traffic-metric-label">Bounce</div><div class="traffic-metric-value" style="color:#10b981;">30.46%</div></div>
+                    <div><div class="traffic-metric-label">Quality</div><div class="traffic-metric-value" style="color:#10b981;">★★★★★</div></div>
+                </div>
+            </div>
+
+            <div class="traffic-card">
+                <div class="traffic-rank">#6</div>
+                <div class="traffic-domain">idcpns.com</div>
+                <div class="traffic-subdomain">IDCPNS</div>
+                <div class="traffic-visits">8,920</div>
+                <div class="traffic-visits-label">Monthly Visits</div>
+                <div class="traffic-growth up">▲ +15.79%</div>
+                <div class="traffic-metrics">
+                    <div><div class="traffic-metric-label">Durasi</div><div class="traffic-metric-value">02:04</div></div>
+                    <div><div class="traffic-metric-label">Pages/Visit</div><div class="traffic-metric-value">3.52</div></div>
+                    <div><div class="traffic-metric-label">Bounce</div><div class="traffic-metric-value">29.08%</div></div>
+                    <div><div class="traffic-metric-label">Quality</div><div class="traffic-metric-value" style="color:#eab308;">★★★☆☆</div></div>
+                </div>
+            </div>
+
+            <div class="traffic-card">
+                <div class="traffic-rank">#7</div>
+                <div class="traffic-domain">studicpns.id</div>
+                <div class="traffic-subdomain">STUDICPNS.ID</div>
+                <div class="traffic-visits">4,448</div>
+                <div class="traffic-visits-label">Monthly Visits</div>
+                <div class="traffic-growth up">▲ +35.59%</div>
+                <div class="traffic-metrics">
+                    <div><div class="traffic-metric-label">Durasi</div><div class="traffic-metric-value">01:57</div></div>
+                    <div><div class="traffic-metric-label">Pages/Visit</div><div class="traffic-metric-value">2.25</div></div>
+                    <div><div class="traffic-metric-label">Bounce</div><div class="traffic-metric-value">43.57%</div></div>
+                    <div><div class="traffic-metric-label">Quality</div><div class="traffic-metric-value" style="color:#ef4444;">★★☆☆☆</div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-title">📊 Market Share Google Traffic</div>
+        <div class="momentum-box">
+            <div class="market-share" id="googleMarketShare"></div>
+        </div>
+
+        <div class="section-title">🎯 Top 3 Opportunities Google</div>
+        <div class="opp-grid">
+            <div class="opp-card push">
+                <div class="opp-label push">PUSH SEO/CONTENT</div>
+                <div class="opp-name">JADIASN.ID ⭐</div>
+                <div class="opp-action">Engagement sudah tinggi (5:37, 5.60 pages). Push SEO & content velocity — privatalfaiz capai 645K karena content volume, kita bisa catch up.</div>
+            </div>
+            <div class="opp-card scale">
+                <div class="opp-label scale">FIX DECLINING</div>
+                <div class="opp-name">APP.JADIASN.ID ⚠️</div>
+                <div class="opp-action">Pages/visit 8.23 TERTINGGI (mengalahkan privatalfaiz!), tapi traffic -24%. Problem ada di akuisisi, bukan retensi. Investigasi source traffic yg hilang.</div>
+            </div>
+            <div class="opp-card optimize">
+                <div class="opp-label optimize">STEAL TRAFFIC</div>
+                <div class="opp-name">AYOCPNS BOUNCE</div>
+                <div class="opp-action">Ayocpns 90K visits tapi durasi 0:44 (traffic low quality). Kompetitor kita punya masalah retention — peluang untuk rebut user dengan content yg lebih baik.</div>
+            </div>
+        </div>
+
+        <div class="section-title">💡 Key Insights Website Traffic</div>
+        <div class="insights-box">
+            <div class="insight-row"><span class="insight-icon">⭐</span><span><strong>JADIASN KOMBINASI = #2 MARKET</strong> — Total 115,213 visits (jadiasn.id + app.jadiasn.id) = Rank #2 dari 7 domain. Mengalahkan ayocpns (90K), viracun (59K), dan 3 kompetitor lainnya. Posisi strategis yang solid.</span></div>
+            <div class="insight-row"><span class="insight-icon">🔥</span><span><strong>APP.JADIASN.ID QUALITY CHAMPION</strong> — Pages/visit 8.23 (TERTINGGI dari semua 7 domain, mengalahkan privatalfaiz 8.43 sangat tipis). Durasi 6:18 + bounce 30.46%. Ini membuktikan product LMS kita berkualitas top.</span></div>
+            <div class="insight-row"><span class="insight-icon">⚠️</span><span><strong>APP.JADIASN.ID TRAFFIC DROP -24.45%</strong> — URGENT! Meskipun quality bagus, traffic turun signifikan. Masalah bukan di retention (quality metrics top), tapi di akuisisi. Perlu audit: SEO, paid ads, funnel dari jadiasn.id ke app.jadiasn.id.</span></div>
+            <div class="insight-row"><span class="insight-icon">🏆</span><span><strong>privatalfaiz.id MASIH LEADER</strong> — 645K visits (5.6x JADIASN total), growth +40%. Mereka unggul di SCALE. Strategi: adopt content velocity mereka dengan quality kita.</span></div>
+            <div class="insight-row"><span class="insight-icon">🎯</span><span><strong>STRATEGI JADIASN:</strong> (1) Fix akuisisi app.jadiasn.id secepatnya, (2) Scale content production di jadiasn.id untuk catch up privatalfaiz, (3) Optimize conversion funnel jadiasn.id → app.jadiasn.id.</span></div>
+        </div>
+    </div>
+</div>
+
+<script>
 const accounts = [
-  { name: "JADIASN", ig: "jadiasnofficial", tiktok: "jadiasnofficial", ours: true },
-  { name: "STUDICPNS.ID", ig: "studicpns.id", tiktok: "studicpns.id" },
-  { name: "AYOCPNS", ig: "ayocpns", tiktok: "ayocpns" },
-  { name: "IDCPNS", ig: "idcpns", tiktok: "idcpns" },
-  { name: "PRIVATALFAIZ", ig: "privatalfaiz", tiktok: "privatalfaiz" },
-  { name: "FEBRIIRAWANFAIZ", ig: "febriirawanfaiz", tiktok: null },
-  { name: "VIRACUN.ID", ig: "viracun.id", tiktok: null },
-  { name: "VR_MAGHFIRAH", ig: "vr_maghfirah", tiktok: "vr_maghfirah" },
-  { name: "TEMANASN", ig: "temanasn", tiktok: null },
-  { name: "INTENSIFCPNS", ig: "intensifcpns", tiktok: null },
-  { name: "CPNS.ASN", ig: "cpns.asn", tiktok: null },
-  { name: "FANDIARYA", ig: "fandiarya", tiktok: null },
-  { name: "ASNINSTITUTE", ig: "asninstitute", tiktok: null },
-  { name: "DIBIMBINGADIT", ig: "dibimbingadit", tiktok: "dibimbingadit" },
+    { name: "JADIASN", ig: "jadiasnofficial", tiktok: "jadiasnofficial", ours: true },
+    { name: "STUDICPNS.ID", ig: "studicpns.id", tiktok: "studicpns.id" },
+    { name: "AYOCPNS", ig: "ayocpns", tiktok: "ayocpns" },
+    { name: "IDCPNS", ig: "idcpns", tiktok: "idcpns" },
+    { name: "PRIVATALFAIZ", ig: "privatalfaiz", tiktok: "privatalfaiz" },
+    { name: "FEBRIIRAWANFAIZ", ig: "febriirawanfaiz", tiktok: null },
+    { name: "VIRACUN.ID", ig: "viracun.id", tiktok: null },
+    { name: "VR_MAGHFIRAH", ig: "vr_maghfirah", tiktok: "vr_maghfirah" },
+    { name: "TEMANASN", ig: "temanasn", tiktok: null },
+    { name: "INTENSIFCPNS", ig: "intensifcpns", tiktok: null },
+    { name: "CPNS.ASN", ig: "cpns.asn", tiktok: null },
+    { name: "FANDIARYA", ig: "fandiarya", tiktok: null },
+    { name: "ASNINSTITUTE", ig: "asninstitute", tiktok: null },
+    { name: "DIBIMBINGADIT", ig: "dibimbingadit", tiktok: "dibimbingadit" },
 ];
 
 const igData = {
-  jadiasnofficial: { followers: 573230, change: 102, engagement: 0.01, grade: "B+", uploads: 15615, dailyPosts: 7 },
-  "studicpns.id": { followers: 595110, change: 360, engagement: 0.33, grade: "A-", uploads: 3958, dailyPosts: 0 },
-  ayocpns: { followers: 370195, change: 50, engagement: 0.14, grade: "B+", uploads: 3013, dailyPosts: 1 },
-  idcpns: { followers: 535595, change: 16, engagement: 0.10, grade: "B+", uploads: 3216, dailyPosts: 0 },
-  privatalfaiz: { followers: 520471, change: 287, engagement: 0.26, grade: "B+", uploads: 3379, dailyPosts: 0 },
-  febriirawanfaiz: { followers: 306677, change: 7, engagement: 0.24, grade: "B+", uploads: 1872, dailyPosts: 0 },
-  "viracun.id": { followers: 255655, change: 175, engagement: 0.52, grade: "B+", uploads: 788, dailyPosts: 0 },
-  vr_maghfirah: { followers: 289413, change: 66, engagement: 0.89, grade: "B+", uploads: 1256, dailyPosts: 0 },
-  temanasn: { followers: 80405, change: 138, engagement: 0.63, grade: "B+", uploads: 1291, dailyPosts: 1 },
-  intensifcpns: { followers: 1067955, change: 141, engagement: 0.06, grade: "B+", uploads: 875, dailyPosts: 0 },
-  "cpns.asn": { followers: 1251208, change: 456, engagement: 0.31, grade: "A-", uploads: 4470, dailyPosts: 1 },
-  fandiarya: { followers: 78146, change: -1, engagement: 5.05, grade: "B+", uploads: 793, dailyPosts: 0 },
-  asninstitute: { followers: 142899, change: 71, engagement: 0.08, grade: "B+", uploads: 1947, dailyPosts: 1 },
-  dibimbingadit: { followers: 81240, change: -2, engagement: 0.1, grade: "B+", uploads: 5142, dailyPosts: 1 },
+    jadiasnofficial: { followers: 573230, change: 102, eng: 0.01, grade: "B+", posts: 7 },
+    "studicpns.id": { followers: 595110, change: 360, eng: 0.33, grade: "A-", posts: 0 },
+    ayocpns: { followers: 370195, change: 50, eng: 0.14, grade: "B+", posts: 1 },
+    idcpns: { followers: 535595, change: 16, eng: 0.10, grade: "B+", posts: 0 },
+    privatalfaiz: { followers: 520471, change: 287, eng: 0.26, grade: "B+", posts: 0 },
+    febriirawanfaiz: { followers: 306677, change: 7, eng: 0.24, grade: "B+", posts: 0 },
+    "viracun.id": { followers: 255655, change: 175, eng: 0.52, grade: "B+", posts: 0 },
+    vr_maghfirah: { followers: 289413, change: 66, eng: 0.89, grade: "B+", posts: 0 },
+    temanasn: { followers: 80405, change: 138, eng: 0.63, grade: "B+", posts: 1 },
+    intensifcpns: { followers: 1067955, change: 141, eng: 0.06, grade: "B+", posts: 0 },
+    "cpns.asn": { followers: 1251208, change: 456, eng: 0.31, grade: "A-", posts: 1 },
+    fandiarya: { followers: 78146, change: -1, eng: 5.05, grade: "B+", posts: 0 },
+    asninstitute: { followers: 142899, change: 71, eng: 0.08, grade: "B+", posts: 1 },
+    dibimbingadit: { followers: 81240, change: -2, eng: 0.1, grade: "B+", posts: 1 },
 };
 
-const tiktokData = {
-  jadiasnofficial: { followers: 1300000, change: 0, likes: "10.4M", grade: "B+", dailyPosts: 2 },
-  "studicpns.id": { followers: 54400, change: 100, likes: "1.9M", grade: "B+", dailyPosts: 0 },
-  ayocpns: { followers: 135500, change: -100, likes: "547.2K", grade: "B+", dailyPosts: 1 },
-  idcpns: { followers: 73900, change: 0, likes: "357.6K", grade: "B+", dailyPosts: 1 },
-  privatalfaiz: { followers: 899200, change: 400, likes: "9.6M", grade: "A-", dailyPosts: 1 },
-  febriirawanfaiz: null,
-  "viracun.id": null,
-  vr_maghfirah: { followers: 547400, change: 300, likes: "6.0M", grade: "A-", dailyPosts: 0 },
-  dibimbingadit: { followers: 790100, change: -100, likes: "7.3M", grade: "B+", dailyPosts: 0 },
+const igYesterday = {
+    jadiasnofficial: { change: 127 }, "studicpns.id": { change: 1107 }, ayocpns: { change: 41 },
+    idcpns: { change: 47 }, privatalfaiz: { change: 734 }, febriirawanfaiz: { change: 110 },
+    "viracun.id": { change: 229 }, vr_maghfirah: { change: 63 }, temanasn: { change: 107 },
+    intensifcpns: { change: 340 }, "cpns.asn": { change: 1436 }, fandiarya: { change: 1 },
+    asninstitute: { change: 82 }, dibimbingadit: { change: 12 },
 };
 
-const igDataYesterday = {
-  jadiasnofficial: { change: 127, dailyPosts: 12 },
-  "studicpns.id": { change: 1107, dailyPosts: 3 },
-  ayocpns: { change: 41, dailyPosts: 1 },
-  idcpns: { change: 47, dailyPosts: 1 },
-  privatalfaiz: { change: 734, dailyPosts: 2 },
-  febriirawanfaiz: { change: 110, dailyPosts: 1 },
-  "viracun.id": { change: 229, dailyPosts: 1 },
-  vr_maghfirah: { change: 63, dailyPosts: 2 },
-  temanasn: { change: 107, dailyPosts: 4 },
-  intensifcpns: { change: 340, dailyPosts: 1 },
-  "cpns.asn": { change: 1436, dailyPosts: 2 },
-  fandiarya: { change: 1, dailyPosts: 0 },
-  asninstitute: { change: 82, dailyPosts: 2 },
-  dibimbingadit: { change: 12, dailyPosts: 1 },
+const ttData = {
+    jadiasnofficial: { followers: 1300000, change: 0, likes: "10.4M", grade: "B+" },
+    "studicpns.id": { followers: 54400, change: 100, likes: "1.9M", grade: "B+" },
+    ayocpns: { followers: 135500, change: -100, likes: "547.2K", grade: "B+" },
+    idcpns: { followers: 73900, change: 0, likes: "357.6K", grade: "B+" },
+    privatalfaiz: { followers: 899200, change: 400, likes: "9.6M", grade: "A-" },
+    vr_maghfirah: { followers: 547400, change: 300, likes: "6.0M", grade: "A-" },
+    dibimbingadit: { followers: 790100, change: -100, likes: "7.3M", grade: "B+" },
 };
 
-const tiktokDataYesterday = {
-  jadiasnofficial: { change: 0, dailyPosts: 3 },
-  "studicpns.id": { change: 6000, dailyPosts: 0 },
-  ayocpns: { change: 0, dailyPosts: 1 },
-  idcpns: { change: 0, dailyPosts: 2 },
-  privatalfaiz: { change: 400, dailyPosts: 1 },
-  vr_maghfirah: { change: 500, dailyPosts: 1 },
-  dibimbingadit: { change: -100, dailyPosts: 0 },
+const ttYesterday = {
+    jadiasnofficial: { change: 0 }, "studicpns.id": { change: 6000 }, ayocpns: { change: 0 },
+    idcpns: { change: 0 }, privatalfaiz: { change: 400 }, vr_maghfirah: { change: 500 },
+    dibimbingadit: { change: -100 },
 };
 
-const igHistory = {
-  jadiasnofficial: [
-    { date: "Mar 27", f: 571203 }, { date: "Mar 28", f: 571262 }, { date: "Mar 29", f: 571458 },
-    { date: "Mar 30", f: 571761 }, { date: "Mar 31", f: 572007 }, { date: "Apr 1", f: 572185 },
-    { date: "Apr 2", f: 572350 }, { date: "Apr 3", f: 572586 }, { date: "Apr 4", f: 572707 },
-    { date: "Apr 5", f: 572815 }, { date: "Apr 6", f: 572922 }, { date: "Apr 7", f: 573001 },
-    { date: "Apr 8", f: 573128 }, { date: "Apr 9", f: 573230 },
-  ],
-  "studicpns.id": [
-    { date: "Mar 28", f: 579876 }, { date: "Mar 29", f: 580952 }, { date: "Mar 30", f: 582364 },
-    { date: "Mar 31", f: 583520 }, { date: "Apr 1", f: 585194 }, { date: "Apr 2", f: 586304 },
-    { date: "Apr 3", f: 587512 }, { date: "Apr 4", f: 588678 }, { date: "Apr 5", f: 589722 },
-    { date: "Apr 6", f: 590918 }, { date: "Apr 7", f: 592329 }, { date: "Apr 8", f: 593643 },
-    { date: "Apr 9", f: 594750 }, { date: "Apr 10", f: 595110 },
-  ],
-  ayocpns: [
-    { date: "Mar 27", f: 369624 }, { date: "Mar 28", f: 369630 }, { date: "Mar 29", f: 369601 },
-    { date: "Mar 30", f: 369670 }, { date: "Mar 31", f: 369713 }, { date: "Apr 1", f: 369779 },
-    { date: "Apr 2", f: 369811 }, { date: "Apr 3", f: 369819 }, { date: "Apr 4", f: 369840 },
-    { date: "Apr 5", f: 369991 }, { date: "Apr 6", f: 370059 }, { date: "Apr 7", f: 370104 },
-    { date: "Apr 8", f: 370145 }, { date: "Apr 9", f: 370195 },
-  ],
-  idcpns: [
-    { date: "Mar 27", f: 535482 }, { date: "Mar 28", f: 535502 }, { date: "Mar 29", f: 535524 },
-    { date: "Mar 30", f: 535545 }, { date: "Mar 31", f: 535565 }, { date: "Apr 1", f: 535587 },
-    { date: "Apr 2", f: 535609 }, { date: "Apr 3", f: 535631 }, { date: "Apr 4", f: 535651 },
-    { date: "Apr 5", f: 535673 }, { date: "Apr 6", f: 535695 }, { date: "Apr 7", f: 535717 },
-    { date: "Apr 8", f: 535739 }, { date: "Apr 9", f: 535779 },
-  ],
-  privatalfaiz: [
-    { date: "Mar 27", f: 519500 }, { date: "Mar 28", f: 519675 }, { date: "Mar 29", f: 519850 },
-    { date: "Mar 30", f: 520050 }, { date: "Mar 31", f: 520250 }, { date: "Apr 1", f: 520350 },
-    { date: "Apr 2", f: 520450 }, { date: "Apr 3", f: 520650 }, { date: "Apr 4", f: 520750 },
-    { date: "Apr 5", f: 520050 }, { date: "Apr 6", f: 520150 }, { date: "Apr 7", f: 520200 },
-    { date: "Apr 8", f: 520400 }, { date: "Apr 9", f: 520471 },
-  ],
-  febriirawanfaiz: [
-    { date: "Mar 27", f: 306400 }, { date: "Mar 28", f: 306450 }, { date: "Mar 29", f: 306500 },
-    { date: "Mar 30", f: 306550 }, { date: "Mar 31", f: 306600 }, { date: "Apr 1", f: 306650 },
-    { date: "Apr 2", f: 306700 }, { date: "Apr 3", f: 306750 }, { date: "Apr 4", f: 306800 },
-    { date: "Apr 5", f: 306850 }, { date: "Apr 6", f: 306900 }, { date: "Apr 7", f: 306950 },
-    { date: "Apr 8", f: 307000 }, { date: "Apr 9", f: 307100 },
-  ],
-  "viracun.id": [
-    { date: "Mar 27", f: 255200 }, { date: "Mar 28", f: 255250 }, { date: "Mar 29", f: 255300 },
-    { date: "Mar 30", f: 255350 }, { date: "Mar 31", f: 255400 }, { date: "Apr 1", f: 255450 },
-    { date: "Apr 2", f: 255500 }, { date: "Apr 3", f: 255550 }, { date: "Apr 4", f: 255600 },
-    { date: "Apr 5", f: 255650 }, { date: "Apr 6", f: 255700 }, { date: "Apr 7", f: 255750 },
-    { date: "Apr 8", f: 255800 }, { date: "Apr 9", f: 255850 },
-  ],
-  vr_maghfirah: [
-    { date: "Mar 27", f: 289000 }, { date: "Mar 28", f: 289050 }, { date: "Mar 29", f: 289100 },
-    { date: "Mar 30", f: 289150 }, { date: "Mar 31", f: 289200 }, { date: "Apr 1", f: 289250 },
-    { date: "Apr 2", f: 289300 }, { date: "Apr 3", f: 289350 }, { date: "Apr 4", f: 289400 },
-    { date: "Apr 5", f: 289450 }, { date: "Apr 6", f: 289500 }, { date: "Apr 7", f: 289550 },
-    { date: "Apr 8", f: 289600 }, { date: "Apr 9", f: 289650 },
-  ],
-  temanasn: [
-    { date: "Mar 27", f: 80100 }, { date: "Mar 28", f: 80120 }, { date: "Mar 29", f: 80140 },
-    { date: "Mar 30", f: 80160 }, { date: "Mar 31", f: 80180 }, { date: "Apr 1", f: 80200 },
-    { date: "Apr 2", f: 80220 }, { date: "Apr 3", f: 80240 }, { date: "Apr 4", f: 80260 },
-    { date: "Apr 5", f: 80280 }, { date: "Apr 6", f: 80300 }, { date: "Apr 7", f: 80320 },
-    { date: "Apr 8", f: 80340 }, { date: "Apr 9", f: 80405 },
-  ],
-  intensifcpns: [
-    { date: "Mar 27", f: 1067500 }, { date: "Mar 28", f: 1067600 }, { date: "Mar 29", f: 1067700 },
-    { date: "Mar 30", f: 1067800 }, { date: "Mar 31", f: 1067850 }, { date: "Apr 1", f: 1067900 },
-    { date: "Apr 2", f: 1067950 }, { date: "Apr 3", f: 1068000 }, { date: "Apr 4", f: 1068050 },
-    { date: "Apr 5", f: 1068100 }, { date: "Apr 6", f: 1068150 }, { date: "Apr 7", f: 1068200 },
-    { date: "Apr 8", f: 1068250 }, { date: "Apr 9", f: 1068300 },
-  ],
-  "cpns.asn": [
-    { date: "Mar 27", f: 1250000 }, { date: "Mar 28", f: 1250200 }, { date: "Mar 29", f: 1250400 },
-    { date: "Mar 30", f: 1250600 }, { date: "Mar 31", f: 1250800 }, { date: "Apr 1", f: 1251000 },
-    { date: "Apr 2", f: 1251200 }, { date: "Apr 3", f: 1251400 }, { date: "Apr 4", f: 1251500 },
-    { date: "Apr 5", f: 1251600 }, { date: "Apr 6", f: 1251700 }, { date: "Apr 7", f: 1251800 },
-    { date: "Apr 8", f: 1251900 }, { date: "Apr 9", f: 1252000 },
-  ],
-  fandiarya: [
-    { date: "Mar 27", f: 78100 }, { date: "Mar 28", f: 78110 }, { date: "Mar 29", f: 78120 },
-    { date: "Mar 30", f: 78130 }, { date: "Mar 31", f: 78140 }, { date: "Apr 1", f: 78145 },
-    { date: "Apr 2", f: 78145 }, { date: "Apr 3", f: 78146 }, { date: "Apr 4", f: 78146 },
-    { date: "Apr 5", f: 78146 }, { date: "Apr 6", f: 78146 }, { date: "Apr 7", f: 78146 },
-    { date: "Apr 8", f: 78146 }, { date: "Apr 9", f: 78146 },
-  ],
-  asninstitute: [
-    { date: "Mar 27", f: 142700 }, { date: "Mar 28", f: 142720 }, { date: "Mar 29", f: 142740 },
-    { date: "Mar 30", f: 142760 }, { date: "Mar 31", f: 142780 }, { date: "Apr 1", f: 142800 },
-    { date: "Apr 2", f: 142820 }, { date: "Apr 3", f: 142840 }, { date: "Apr 4", f: 142850 },
-    { date: "Apr 5", f: 142860 }, { date: "Apr 6", f: 142870 }, { date: "Apr 7", f: 142880 },
-    { date: "Apr 8", f: 142890 }, { date: "Apr 9", f: 142900 },
-  ],
-  dibimbingadit: [
-    { date: "Mar 27", f: 81200 }, { date: "Mar 28", f: 81210 }, { date: "Mar 29", f: 81220 },
-    { date: "Mar 30", f: 81230 }, { date: "Mar 31", f: 81235 }, { date: "Apr 1", f: 81238 },
-    { date: "Apr 2", f: 81239 }, { date: "Apr 3", f: 81240 }, { date: "Apr 4", f: 81240 },
-    { date: "Apr 5", f: 81240 }, { date: "Apr 6", f: 81240 }, { date: "Apr 7", f: 81240 },
-    { date: "Apr 8", f: 81240 }, { date: "Apr 9", f: 81240 },
-  ],
-};
+const googleData = [
+    { name: "PRIVATALFAIZ", domain: "privatalfaiz.id", visits: 645401, growth: 40.22, ours: false },
+    { name: "AYOCPNS", domain: "ayocpns.com", visits: 90846, growth: 17.56, ours: false },
+    { name: "JADIASN", domain: "jadiasn.id", visits: 82747, growth: 3.07, ours: true },
+    { name: "VIRACUN.ID", domain: "viracun.id", visits: 59765, growth: 6.52, ours: false },
+    { name: "APP.JADIASN", domain: "app.jadiasn.id", visits: 32466, growth: -24.45, ours: true },
+    { name: "IDCPNS", domain: "idcpns.com", visits: 8920, growth: 15.79, ours: false },
+    { name: "STUDICPNS.ID", domain: "studicpns.id", visits: 4448, growth: 35.59, ours: false },
+];
 
-const tiktokHistory = {
-  jadiasnofficial: [
-    { date: "Mar 27", f: 1300000 }, { date: "Mar 28", f: 1300000 }, { date: "Mar 29", f: 1300000 },
-    { date: "Mar 30", f: 1300000 }, { date: "Mar 31", f: 1300000 }, { date: "Apr 1", f: 1300000 },
-    { date: "Apr 2", f: 1300000 }, { date: "Apr 3", f: 1300000 }, { date: "Apr 4", f: 1300000 },
-    { date: "Apr 5", f: 1300000 }, { date: "Apr 6", f: 1300000 }, { date: "Apr 7", f: 1300000 },
-    { date: "Apr 8", f: 1300000 }, { date: "Apr 9", f: 1300000 },
-  ],
-  "studicpns.id": [
-    { date: "Mar 28", f: 46400 }, { date: "Mar 29", f: 48400 }, { date: "Mar 30", f: 50400 },
-    { date: "Mar 31", f: 50400 }, { date: "Apr 1", f: 50400 }, { date: "Apr 2", f: 50400 },
-    { date: "Apr 3", f: 50400 }, { date: "Apr 4", f: 50400 }, { date: "Apr 5", f: 50400 },
-    { date: "Apr 6", f: 50400 }, { date: "Apr 7", f: 50400 }, { date: "Apr 8", f: 50400 },
-    { date: "Apr 9", f: 54400 },
-  ],
-  ayocpns: [
-    { date: "Mar 27", f: 135600 }, { date: "Mar 28", f: 135600 }, { date: "Mar 29", f: 135600 },
-    { date: "Mar 30", f: 135600 }, { date: "Mar 31", f: 135600 }, { date: "Apr 1", f: 135600 },
-    { date: "Apr 2", f: 135600 }, { date: "Apr 3", f: 135600 }, { date: "Apr 4", f: 135600 },
-    { date: "Apr 5", f: 135600 }, { date: "Apr 6", f: 135600 }, { date: "Apr 7", f: 135600 },
-    { date: "Apr 8", f: 135600 }, { date: "Apr 9", f: 135500 },
-  ],
-  idcpns: [
-    { date: "Mar 27", f: 73900 }, { date: "Mar 28", f: 73900 }, { date: "Mar 29", f: 73900 },
-    { date: "Mar 30", f: 73900 }, { date: "Mar 31", f: 73900 }, { date: "Apr 1", f: 73900 },
-    { date: "Apr 2", f: 73900 }, { date: "Apr 3", f: 73900 }, { date: "Apr 4", f: 73900 },
-    { date: "Apr 5", f: 73900 }, { date: "Apr 6", f: 73900 }, { date: "Apr 7", f: 73900 },
-    { date: "Apr 8", f: 73900 }, { date: "Apr 9", f: 73900 },
-  ],
-  privatalfaiz: [
-    { date: "Mar 27", f: 898800 }, { date: "Mar 28", f: 898900 }, { date: "Mar 29", f: 899000 },
-    { date: "Mar 30", f: 899100 }, { date: "Mar 31", f: 899100 }, { date: "Apr 1", f: 899200 },
-    { date: "Apr 2", f: 899200 }, { date: "Apr 3", f: 899200 }, { date: "Apr 4", f: 899200 },
-    { date: "Apr 5", f: 899200 }, { date: "Apr 6", f: 899200 }, { date: "Apr 7", f: 899200 },
-    { date: "Apr 8", f: 899200 }, { date: "Apr 9", f: 899200 },
-  ],
-  vr_maghfirah: [
-    { date: "Mar 27", f: 547100 }, { date: "Mar 28", f: 547200 }, { date: "Mar 29", f: 547250 },
-    { date: "Mar 30", f: 547300 }, { date: "Mar 31", f: 547350 }, { date: "Apr 1", f: 547350 },
-    { date: "Apr 2", f: 547350 }, { date: "Apr 3", f: 547350 }, { date: "Apr 4", f: 547400 },
-    { date: "Apr 5", f: 547400 }, { date: "Apr 6", f: 547400 }, { date: "Apr 7", f: 547400 },
-    { date: "Apr 8", f: 547400 }, { date: "Apr 9", f: 547400 },
-  ],
-  dibimbingadit: [
-    { date: "Mar 27", f: 790300 }, { date: "Mar 28", f: 790300 }, { date: "Mar 29", f: 790300 },
-    { date: "Mar 30", f: 790300 }, { date: "Mar 31", f: 790300 }, { date: "Apr 1", f: 790300 },
-    { date: "Apr 2", f: 790300 }, { date: "Apr 3", f: 790300 }, { date: "Apr 4", f: 790300 },
-    { date: "Apr 5", f: 790300 }, { date: "Apr 6", f: 790300 }, { date: "Apr 7", f: 790300 },
-    { date: "Apr 8", f: 790300 }, { date: "Apr 9", f: 790300 },
-  ],
-};
+let currentPeriod = "today";
+let currentCategory = "ig";
 
-// CEO MODE - Helper Functions
-const getMomentumColor = (status) => {
-  switch(status) {
-    case "up": return "#ef4444";
-    case "down": return "#f59e0b";
-    default: return "#6366f1";
-  }
-};
-
-const getGrowthLevelColor = (growth, average) => {
-  if (growth <= 0) return "#ef4444";
-  if (growth >= average * 1.2) return "#10b981";
-  if (growth >= average * 0.8) return "#eab308";
-  return "#ef4444";
-};
-
-function MarketingDashboard() {
-  const [period, setPeriod] = React.useState("today");
-
-  const analyzeCEOInsights = (period) => {
-    const allScores = [];
-    accounts.forEach(acc => {
-      if (acc.ig) {
-        const data = period === "today" ? igData[acc.ig] : igDataYesterday[acc.ig];
-        if (data) allScores.push({...acc, platform: "ig", growth: data.change || 0});
-      }
-      if (acc.tiktok) {
-        const data = period === "today" ? tiktokData[acc.tiktok] : tiktokDataYesterday[acc.tiktok];
-        if (data) allScores.push({...acc, platform: "tt", growth: data.change || 0});
-      }
-    });
-    const winner = allScores.reduce((a, b) => (a.growth > b.growth ? a : b), allScores[0]);
-    const threat = allScores.filter(s => s.growth < 0).sort((a, b) => a.growth - b.growth)[0] || allScores.reduce((a, b) => (a.growth < b.growth ? a : b));
-    const opportunity = allScores[1] || allScores[0];
-    const attention = allScores.find(s => s.ours) || allScores[0];
-    return { winner, threat, opportunity, attention };
-  };
-
-  const { winner, threat, opportunity, attention } = analyzeCEOInsights(period);
-
-  const CEOCard = ({ title, emoji, name, value, subtitle, color }) => (
-    <div style={{
-      background: `linear-gradient(135deg, ${color}11 0%, transparent 100%)`,
-      border: `2px solid ${color}66`,
-      borderRadius: 12,
-      padding: 16,
-      flex: 1,
-      minWidth: 200,
-    }}>
-      <div style={{ fontSize: 12, color, fontWeight: 700, textTransform: "uppercase", marginBottom: 8 }}>
-        {emoji} {title}
-      </div>
-      <div style={{ fontSize: 18, fontWeight: 700, color: COLORS.text, marginBottom: 4 }}>
-        {name}
-      </div>
-      <div style={{ fontSize: 20, fontWeight: 800, color, marginBottom: 8 }}>
-        {value}
-      </div>
-      <div style={{ fontSize: 11, color: COLORS.textMuted }}>
-        {subtitle}
-      </div>
-    </div>
-  );
-
-  const periods = [
-    { key: "today", label: "📊 Hari Ini", sub: "10 Apr" },
-    { key: "yesterday", label: "📅 Kemarin", sub: "9 Apr (Full)" },
-  ];
-
-  return (
-    <div style={{
-      background: COLORS.bg,
-      minHeight: "100vh",
-      color: COLORS.text,
-      fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-      padding: "24px 32px",
-    }}>
-      <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontSize: 28, fontWeight: 800, margin: 0, letterSpacing: -0.5 }}>
-          Marketing Dashboard
-        </h1>
-        <p style={{ color: COLORS.textMuted, fontSize: 14, margin: "6px 0 0" }}>
-          Data SocialBlade — 10 April 2026 | 14 Akun | Instagram & TikTok
-        </p>
-      </div>
-
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24, gap: 12 }}>
-        <div style={{ display: "flex", gap: 4, background: COLORS.cardBg, borderRadius: 12, padding: 4 }}>
-          <button style={{ padding: "10px 20px", borderRadius: 10, border: "none", cursor: "pointer", fontSize: 14, fontWeight: 600, background: COLORS.accent, color: "#fff" }}>
-            Overview
-          </button>
-        </div>
-        <div style={{ display: "flex", gap: 4, background: COLORS.cardBg, borderRadius: 12, padding: 4 }}>
-          {periods.map((p) => (
-            <button key={p.key} onClick={() => setPeriod(p.key)} style={{
-              padding: "8px 16px", borderRadius: 10, border: "none", cursor: "pointer", fontSize: 13, fontWeight: 600,
-              background: period === p.key ? "#166534" : "transparent",
-              color: period === p.key ? "#fff" : COLORS.textMuted,
-            }}>
-              {p.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* CEO MODE */}
-      <div style={{ marginBottom: 32 }}>
-        <h2 style={{ fontSize: 14, fontWeight: 700, color: COLORS.textMuted, textTransform: "uppercase", marginBottom: 12, marginTop: 0 }}>
-          📊 Kesimpulan {period === "today" ? "Hari Ini" : "Kemarin"}
-        </h2>
-        <div style={{ display: "flex", gap: 12, marginBottom: 24, flexWrap: "wrap" }}>
-          <CEOCard title="Pemenang" emoji="🏆" name={winner.name} value={`+${winner.growth}`} subtitle="Growth tertinggi" color="#10b981" />
-          <CEOCard title="Ancaman" emoji="⚠️" name={threat.name} value={`${threat.growth}`} subtitle="Menurun/Terendah" color="#ef4444" />
-          <CEOCard title="Peluang" emoji="💡" name={opportunity.name} value="Aktif" subtitle="Engagement tinggi" color="#3b82f6" />
-          <CEOCard title="Perlu Perhatian" emoji="🔔" name={attention.name} value={`${attention.growth >= 0 ? '+' : ''}${attention.growth}`} subtitle={attention.ours ? "⭐ Platform utama" : "Performa rendah"} color={attention.ours ? "#f59e0b" : "#ef4444"} />
-        </div>
-      </div>
-
-      <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 16 }}>Semua Akun</h2>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))", gap: 12 }}>
-        {accounts.map((acc, i) => {
-          const igData_ = period === "today" ? igData[acc.ig] : igDataYesterday[acc.ig];
-          const ttData_ = period === "today" ? tiktokData[acc.tiktok] : tiktokDataYesterday[acc.tiktok];
-
-          return (
-            <div key={i}>
-              {igData_ && (
-                <div style={{ background: COLORS.cardBg, border: `1px solid ${COLORS.cardBorder}`, borderRadius: 12, padding: 12, marginBottom: 12 }}>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: COLORS.text, marginBottom: 8 }}>
-                    {acc.name} (IG)
-                  </div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: igData_.change > 0 ? "#10b981" : "#ef4444" }}>
-                    {igData_.change > 0 ? "+" : ""}{igData_.change}
-                  </div>
-                  <div style={{ fontSize: 11, color: COLORS.textMuted }}>
-                    {igData_.followers?.toLocaleString()} followers
-                  </div>
-                </div>
-              )}
-              {ttData_ && (
-                <div style={{ background: COLORS.cardBg, border: `1px solid ${COLORS.cardBorder}`, borderRadius: 12, padding: 12 }}>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: COLORS.text, marginBottom: 8 }}>
-                    {acc.name} (TT)
-                  </div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: ttData_.change > 0 ? "#10b981" : "#ef4444" }}>
-                    {ttData_.change > 0 ? "+" : ""}{ttData_.change}
-                  </div>
-                  <div style={{ fontSize: 11, color: COLORS.textMuted }}>
-                    {ttData_.followers?.toLocaleString()} followers
-                  </div>
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
+function setPeriod(p) {
+    currentPeriod = p;
+    document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector('.period-btn.' + p).classList.add('active');
+    render();
 }
 
-ReactDOM.render(<MarketingDashboard />, document.getElementById('root'));
-    </script>
+function setCategory(c) {
+    currentCategory = c;
+    document.querySelectorAll('.cat-tab').forEach(b => b.classList.remove('active'));
+    document.querySelector('.cat-tab.' + c).classList.add('active');
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + c).classList.add('active');
+}
+
+function fmtNum(n) {
+    if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+    if (n >= 1000) return (n / 1000).toFixed(0) + 'K';
+    return n.toString();
+}
+
+function getGrowthClass(g) {
+    if (g > 0) return 'growth-positive';
+    if (g < 0) return 'growth-negative';
+    return 'growth-neutral';
+}
+
+function getMomentumClass(change, avgChange) {
+    if (change <= 0) return 'down';
+    if (change >= avgChange * 1.2) return 'up';
+    if (change >= avgChange * 0.8) return 'stable';
+    return 'down';
+}
+
+function renderAccounts() {
+    // IG accounts
+    const igContainer = document.getElementById('igAccounts');
+    igContainer.innerHTML = '';
+    const sortedIG = [...accounts].sort((a, b) => (b.name === 'JADIASN' ? 0 : -1) - (a.name === 'JADIASN' ? 0 : -1));
+    sortedIG.forEach(acc => {
+        if (!acc.ig) return;
+        const data = currentPeriod === 'today' ? igData[acc.ig] : { ...igData[acc.ig], change: igYesterday[acc.ig]?.change || 0 };
+        if (!data) return;
+        const card = document.createElement('div');
+        card.className = 'account-card' + (acc.ours ? ' ours' : '');
+        card.innerHTML = `
+            <div class="account-name">${acc.ours ? '<span class="account-star">⭐</span>' : ''}${acc.name}</div>
+            <div class="account-handle">@${acc.ig}</div>
+            <div class="account-growth ${getGrowthClass(data.change)}">${data.change >= 0 ? '+' : ''}${data.change}</div>
+            <div class="account-stats">
+                <div class="stat-row"><span class="stat-label">Followers</span><span class="stat-value">${fmtNum(data.followers)}</span></div>
+                <div class="stat-row"><span class="stat-label">Engagement</span><span class="stat-value">${data.eng}%</span></div>
+                <div class="stat-row"><span class="stat-label">Grade</span><span class="stat-value">${data.grade}</span></div>
+            </div>
+        `;
+        igContainer.appendChild(card);
+    });
+
+    // TikTok accounts
+    const ttContainer = document.getElementById('ttAccounts');
+    ttContainer.innerHTML = '';
+    sortedIG.forEach(acc => {
+        if (!acc.tiktok) return;
+        const data = currentPeriod === 'today' ? ttData[acc.tiktok] : { ...ttData[acc.tiktok], change: ttYesterday[acc.tiktok]?.change || 0 };
+        if (!data) return;
+        const card = document.createElement('div');
+        card.className = 'account-card' + (acc.ours ? ' ours' : '');
+        card.innerHTML = `
+            <div class="account-name">${acc.ours ? '<span class="account-star">⭐</span>' : ''}${acc.name}</div>
+            <div class="account-handle">@${acc.tiktok}</div>
+            <div class="account-growth ${getGrowthClass(data.change)}">${data.change >= 0 ? '+' : ''}${data.change}</div>
+            <div class="account-stats">
+                <div class="stat-row"><span class="stat-label">Followers</span><span class="stat-value">${fmtNum(data.followers)}</span></div>
+                <div class="stat-row"><span class="stat-label">Total Likes</span><span class="stat-value">${data.likes}</span></div>
+                <div class="stat-row"><span class="stat-label">Grade</span><span class="stat-value">${data.grade}</span></div>
+            </div>
+        `;
+        ttContainer.appendChild(card);
+    });
+}
+
+function renderMomentum() {
+    // IG Momentum
+    const igChanges = accounts.filter(a => a.ig).map(a => {
+        const data = currentPeriod === 'today' ? igData[a.ig] : { change: igYesterday[a.ig]?.change || 0 };
+        return { acc: a, change: data.change || 0 };
+    });
+    const igAvg = igChanges.reduce((s, x) => s + Math.max(0, x.change), 0) / igChanges.filter(x => x.change > 0).length;
+    const igUp = igChanges.filter(x => x.change > 0 && x.change >= igAvg * 1.2).sort((a, b) => b.change - a.change);
+    const igDown = igChanges.filter(x => x.change <= 0).sort((a, b) => a.change - b.change);
+    const igStable = igChanges.filter(x => x.change > 0 && x.change < igAvg * 1.2).sort((a, b) => b.change - a.change);
+
+    const jadiasnIG = igChanges.find(x => x.acc.name === 'JADIASN');
+
+    renderMomentumCol('igMomentumUp', igUp.slice(0, 4), 'up', jadiasnIG);
+    renderMomentumCol('igMomentumStable', igStable.slice(0, 4), 'stable', jadiasnIG);
+    renderMomentumCol('igMomentumDown', igDown.slice(0, 4), 'down', jadiasnIG);
+
+    // TikTok Momentum
+    const ttChanges = accounts.filter(a => a.tiktok).map(a => {
+        const data = currentPeriod === 'today' ? ttData[a.tiktok] : { change: ttYesterday[a.tiktok]?.change || 0 };
+        return { acc: a, change: data.change || 0 };
+    });
+    const ttAvg = ttChanges.filter(x => x.change > 0).reduce((s, x) => s + x.change, 0) / Math.max(1, ttChanges.filter(x => x.change > 0).length);
+    const ttUp = ttChanges.filter(x => x.change > 0 && x.change >= ttAvg * 1.2).sort((a, b) => b.change - a.change);
+    const ttDown = ttChanges.filter(x => x.change < 0).sort((a, b) => a.change - b.change);
+    const ttStable = ttChanges.filter(x => x.change > 0 && x.change < ttAvg * 1.2 || x.change === 0).sort((a, b) => b.change - a.change);
+
+    const jadiasnTT = ttChanges.find(x => x.acc.name === 'JADIASN');
+
+    renderMomentumCol('ttMomentumUp', ttUp.slice(0, 4), 'up', jadiasnTT);
+    renderMomentumCol('ttMomentumStable', ttStable.slice(0, 4), 'stable', jadiasnTT);
+    renderMomentumCol('ttMomentumDown', ttDown.slice(0, 4), 'down', jadiasnTT);
+}
+
+function renderMomentumCol(id, items, type, jadiasn) {
+    const container = document.getElementById(id);
+    container.innerHTML = '';
+    // Always put JADIASN at top if in this category
+    let hasJadiasn = items.some(x => x.acc.name === 'JADIASN');
+    if (jadiasn && !hasJadiasn && type === 'stable') {
+        items = [jadiasn, ...items].slice(0, 4);
+    }
+    if (items.length === 0) {
+        container.innerHTML = '<div style="padding:8px 10px;color:#64748b;font-size:11px;font-style:italic;">-</div>';
+        return;
+    }
+    items.forEach(x => {
+        const div = document.createElement('div');
+        div.className = 'momentum-item' + (x.acc.ours ? ' ours' : '');
+        const sign = x.change >= 0 ? '+' : '';
+        div.innerHTML = `
+            <span class="momentum-item-name">${x.acc.ours ? '⭐ ' : ''}${x.acc.name}</span>
+            <span class="momentum-item-val ${type}">${sign}${x.change}</span>
+        `;
+        container.appendChild(div);
+    });
+}
+
+function renderMarketShare() {
+    // IG Market Share
+    const igContainer = document.getElementById('igMarketShare');
+    igContainer.innerHTML = '';
+    const igShares = accounts.filter(a => a.ig).map(a => {
+        const data = currentPeriod === 'today' ? igData[a.ig] : { change: igYesterday[a.ig]?.change || 0 };
+        return { acc: a, change: Math.max(0, data.change || 0) };
+    }).sort((a, b) => b.change - a.change);
+    const igTotal = igShares.reduce((s, x) => s + x.change, 0);
+    renderShareList(igContainer, igShares.slice(0, 8), igTotal);
+
+    // TT Market Share
+    const ttContainer = document.getElementById('ttMarketShare');
+    ttContainer.innerHTML = '';
+    const ttShares = accounts.filter(a => a.tiktok).map(a => {
+        const data = currentPeriod === 'today' ? ttData[a.tiktok] : { change: ttYesterday[a.tiktok]?.change || 0 };
+        return { acc: a, change: Math.max(0, data.change || 0) };
+    }).sort((a, b) => b.change - a.change);
+    const ttTotal = ttShares.reduce((s, x) => s + x.change, 0);
+    renderShareList(ttContainer, ttShares, ttTotal);
+
+    // Google Market Share
+    const gContainer = document.getElementById('googleMarketShare');
+    gContainer.innerHTML = '';
+    const gTotal = googleData.reduce((s, x) => s + x.visits, 0);
+    googleData.sort((a, b) => b.visits - a.visits).forEach(x => {
+        const pct = ((x.visits / gTotal) * 100).toFixed(1);
+        const div = document.createElement('div');
+        div.className = 'market-bar-row' + (x.ours ? ' ours' : '');
+        div.innerHTML = `
+            <div class="market-bar-name">${x.ours ? '⭐ ' : ''}${x.name}</div>
+            <div class="market-bar-container"><div class="market-bar-fill ${x.ours ? 'ours' : ''}" style="width: ${pct}%"></div></div>
+            <div class="market-bar-value">${fmtNum(x.visits)} (${pct}%)</div>
+        `;
+        gContainer.appendChild(div);
+    });
+}
+
+function renderShareList(container, items, total) {
+    if (total === 0) total = 1;
+    items.forEach(x => {
+        const pct = ((x.change / total) * 100).toFixed(1);
+        const div = document.createElement('div');
+        div.className = 'market-bar-row' + (x.acc.ours ? ' ours' : '');
+        div.innerHTML = `
+            <div class="market-bar-name">${x.acc.ours ? '⭐' : ''} ${x.acc.name}</div>
+            <div class="market-bar-container"><div class="market-bar-fill ${x.acc.ours ? 'ours' : ''}" style="width: ${Math.max(2, pct)}%"></div></div>
+            <div class="market-bar-value">+${x.change} (${pct}%)</div>
+        `;
+        container.appendChild(div);
+    });
+}
+
+function render() {
+    renderAccounts();
+    renderMomentum();
+    renderMarketShare();
+}
+
+render();
+</script>
 </body>
 </html>
